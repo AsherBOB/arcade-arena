@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcade Arena NG - Progression Edition</title>
+    <style>
+        body {
+            margin: 0;
+            background: #1e1e2f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            user-select: none;
+        }
+        #game-wrapper {
+            position: relative;
+        }
+        canvas {
+            border: 6px solid #fff;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            display: block;
+        }
+        #shop-modal {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 450px;
+            background: rgba(30, 30, 47, 0.95);
+            border: 4px solid #ffd700;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            color: white;
+            text-align: center;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+        #shop-modal h2 {
+            margin-top: 0;
+            color: #ffd700;
+            font-size: 28px;
+        }
+        .bank-info {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #a0aec0;
+        }
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .shop-item {
+            background: #2d2d44;
+            border: 2px solid #444;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .shop-item:hover {
+            transform: translateY(-2px);
+            background: #3d3d5c;
+        }
+        .shop-item.owned {
+            border-color: #4caf50;
+        }
+        .shop-item.equipped {
+            border-color: #ffd700;
+            background: #4a90e2;
+        }
+        .item-avatar {
+            font-size: 40px;
+            margin-bottom: 5px;
+        }
+        .item-name {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .item-cost {
+            font-size: 14px;
+            color: #ffd700;
+            margin-top: 5px;
+        }
+        .close-btn {
+            background: #ff5722;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .close-btn:hover {
+            background: #f44336;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 🎬 ANIMATED SPLASH WELCOME SCREEN -->
+<div id="splash-welcome" style="position: absolute; width: 100vw; height: 100vh; background: #0b0b0e; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; top: 0; left: 0; transition: opacity 1s ease-in-out;">
+    <div style="text-align: center; animation: pulseGlow 2s infinite ease-in-out;">
+        <div style="font-size: 80px; margin-bottom: 15px; filter: drop-shadow(0 0 20px rgba(74, 144, 226, 0.5));">🏟️</div>
+        <h1 style="color: #ffffff; font-size: 42px; margin: 0; letter-spacing: 3px; font-weight: bold; font-family: 'Segoe UI', sans-serif;">NG ARCADE ARENA</h1>
+        <p style="color: #4a90e2; font-size: 16px; margin: 10px 0 0 0; font-weight: bold; letter-spacing: 6px; text-transform: uppercase;">Loading Universe...</p>
+    </div>
+    <style>
+        @keyframes pulseGlow {
+            0% { transform: scale(0.96); opacity: 0.8; }
+            50% { transform: scale(1.02); opacity: 1; filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.3)); }
+            100% { transform: scale(0.96); opacity: 0.8; }
+        }
+    </style>
+</div>
+
+<!-- SECURE LOGIN SCREEN OVERLAY -->
+<div id="login-overlay" style="position: absolute; width: 100vw; height: 100vh; background: #121214; z-index: 999; display: flex; justify-content: center; align-items: center; top: 0; left: 0;">
+    <div style="background: #202024; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; width: 320px; border: 1px solid #323238;">
+        <h2 style="color: #4a90e2; margin-bottom: 20px; font-size: 24px;">🎮 Arcade Hub NG</h2>
+        <p style="color: #8d8d99; font-size: 14px; margin-bottom: 25px;">Log in or create a player profile to secure your coins bank.</p>
+        <input type="text" id="username-field" placeholder="Username / Player Tag" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #323238; background: #121214; color: white; box-sizing: border-box;">
+        <input type="password" id="password-field" placeholder="Security Pin / Password" style="width: 100%; padding: 12px; margin-bottom: 25px; border-radius: 6px; border: 1px solid #323238; background: #121214; color: white; box-sizing: border-box;">
+        <button onclick="handleLogin()" style="width: 100%; padding: 14px; background: #388e3c; color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; font-size: 16px;">Enter Arcade Room</button>
+    </div>
+</div>
+<div id="game-wrapper">
+    <!-- 🎯 TABINDEX FIXED: Enables instant keyboard capture focus when clicked -->
+    <canvas id="gameCanvas" width="800" height="400" tabindex="1" style="outline: none;"></canvas>
+
+    <!-- 🏠 MAIN MENU HOME SCREEN OVERLAY -->
+    <div id="menu-overlay" style="position: absolute; top: 0; left: 0; width: 800px; height: 400px; background: rgba(20, 20, 30, 0.95); border-radius: 12px; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; box-sizing: border-box; border: 6px solid #fff; z-index: 5;">
+        <h1 style="color: #ffd700; margin-bottom: 5px; font-size: 36px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); font-weight: bold;">🏟️ NG ARCADE ARENA</h1>
+        <p id="welcome-message" style="color: #a0aec0; margin-bottom: 30px; font-size: 16px;">Welcome, Player</p>
+        
+        <div style="display: flex; gap: 20px; align-items: center;">
+            <div onclick="startMode('solo')" style="background: #2d2d44; border: 2px solid #4a90e2; padding: 15px; border-radius: 12px; text-align: center; width: 150px; cursor: pointer;">
+                <div style="font-size: 32px; margin-bottom: 5px;">🏃</div>
+                <h3 style="margin: 0 0 5px 0; color: #4a90e2; font-weight: bold; font-size: 15px;">SOLO RUN</h3>
+                <p style="margin: 0; font-size: 11px; color: #a0aec0;">Practice skills & gather coins</p>
+            </div>
+
+            <div onclick="startMode('duel')" style="background: #2d2d44; border: 2px solid #e91e63; padding: 15px; border-radius: 12px; text-align: center; width: 150px; cursor: pointer;">
+                <div style="font-size: 32px; margin-bottom: 5px;">⚔️</div>
+                <h3 style="margin: 0 0 5px 0; color: #e91e63; font-weight: bold; font-size: 15px;">DUEL ARENA</h3>
+                <p style="margin: 0; font-size: 11px; color: #a0aec0;">Bet 10 Coins vs Bot racer</p>
+            </div>
+
+            <!-- 🏎️ INTERACTIVE GRAND PRIX CARD -->
+            <div onclick="unlockGrandPrixMode()" style="background: linear-gradient(135deg, #ff9800, #ff5722); border: 2px solid #fff; padding: 15px; border-radius: 12px; text-align: center; width: 150px; cursor: pointer; box-shadow: 0 4px 15px rgba(255,87,34,0.3);">
+                <div style="font-size: 32px; margin-bottom: 5px;">🏎️</div>
+                <h3 style="margin: 0 0 5px 0; color: #fff; font-weight: bold; font-size: 15px;">GRAND PRIX</h3>
+                <p id="gp-lock-text" style="margin: 0; font-size: 10px; color: #fff; font-weight: bold;">🔒 UNLOCK: 50 COINS<br>(Full Manual Steering)</p>
+            </div>
+        </div>
+        
+        <button onclick="openShop()" style="margin-top: 25px; background: transparent; border: 1px solid #ffd700; color: #ffd700; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: bold;">🎪 Open Locker / Character Shop</button>
+    </div>
+
+    <!-- POPUP ARCADE SHOP -->
+    <div id="shop-modal">
+        <h2>🎪 Character Shop 🎪</h2>
+        <div class="bank-info">Your Bank: <span id="shop-bank-coins">0</span> 🪙</div>
+        
+        <div class="shop-grid">
+            <button class="close-btn" onclick="closeShop()">Close & Return</button>
+            <div class="shop-item equipped" id="shop-boy" onclick="handleShopSelection('boy')">
+                <div class="item-avatar">👦</div>
+                <div class="item-name">Boy (T1)</div>
+                <div class="item-cost">Equipped</div>
+            </div>
+            <div class="shop-item" id="shop-girl" onclick="handleShopSelection('girl')">
+                <div class="item-avatar">👧</div>
+                <div class="item-name">Girl (T1)</div>
+                <div class="item-cost">5 Coins</div>
+            </div>
+            <div class="shop-item" id="shop-sheep" onclick="handleShopSelection('sheep')">
+                <div class="item-avatar">🐑</div>
+                <div class="item-name">Sheep (T1)</div>
+                <div class="item-cost">15 Coins</div>
+            </div>
+            <div class="shop-item" id="shop-lion" onclick="handleShopSelection('lion')">
+                <div class="item-avatar">🦁</div>
+                <div class="item-name">Lion (T1)</div>
+                <div class="item-cost">30 Coins</div>
+            </div>
+            <div class="shop-item" id="shop-magnetMan" onclick="handleShopSelection('magnetMan')">
+                <div class="item-avatar">🧲</div>
+                <div class="item-name">Magnet (T2)</div>
+                <div class="item-cost">🔒 Lvl 50</div>
+            </div>
+            <div class="shop-item" id="shop-ninja" onclick="handleShopSelection('ninja')">
+                <div class="item-avatar">🥷</div>
+                <div class="item-name">Ninja (T2)</div>
+                <div class="item-cost">🔒 Lvl 50</div>
+            </div>
+            <div class="shop-item" id="shop-dragon" onclick="handleShopSelection('dragon')">
+                <div class="item-avatar">🐉</div>
+                <div class="item-name">Dragon (T2)</div>
+                <div class="item-cost">🔒 Lvl 50</div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+// Game State Storage Engine
+let score = 0;
+let coinsBank = 0;
+let sessionCoins = 0;
+let gameOver = false;
+let isShopOpen = false;
+let currentSessionUser = null;
+
+// Track Level Variables
+let gameMode = "solo"; 
+let finishLineX = 5000; 
+let worldProgress = 0; 
+let matchStatusMessage = "";
+
+// Level Progress Parameters
+let playerLevel = 1;
+let playerXP = 0;
+const XP_PER_LEVEL = 100;
+
+// Grand Prix Control Vectors
+let isGPUnlocked = false;
+let playerSpeedX = 0;
+let keysPressed = {};
+
+const characters = {
+    boy:       { label: "👦", cost: 0,   tier: 1 },
+    girl:      { label: "👧", cost: 5,   tier: 1 },
+    sheep:     { label: "🐑", cost: 15,  tier: 1 },
+    lion:      { label: "🦁", cost: 30,  tier: 1 },
+    magnetMan: { label: "🧲", cost: 50,  tier: 2 },
+    ninja:     { label: "🥷", cost: 80,  tier: 2 },
+    dragon:    { label: "🐉", cost: 120, tier: 2 }
+};
+let unlockedCharacters = ['boy'];
+let activeCharacter = 'boy';
+
+// Entity Configurations
+const player = { x: 80, y: 290, width: 40, height: 50, gravity: 0.6, lift: -12, velocity: 0, jumpsLeft: 2 };
+const botOpponent = { x: 80, y: 290, progress: 0, speed: 5.8, label: "🤖", velocity: 0, grounded: true };
+const obstacle = { x: 900, y: 310, width: 30, height: 30, speed: 6 };
+const coin = { x: 1100, y: 220, radius: 12, pulse: 0, active: true };
+const itemCrate = { x: -100, y: 150, w: 25, h: 25, active: false };
+
+// Ability States & Scenery Arrays
+let magnetActive = false; let hasShield = false; let hasSecondLife = false; let invincibilityTimer = 0;
+let activePowerUp = null; let powerUpTimer = 0;
+const shopIconBox = { x: 365, y: 230, w: 70, h: 70 };
+
+let platforms = [
+    { x: 200,  y: 290, w: 250, h: 50, type: "solid" },
+    { x: 550,  y: 230, w: 120, h: 20, type: "solid" },
+    { x: 750,  y: 200, w: 100, h: 20, type: "broken", timer: 35, broken: false },
+    { x: 950,  y: 250, w: 140, h: 20, type: "solid" },
+    { x: 1200, y: 170, w: 90,  h: 20, type: "broken", timer: 35, broken: false },
+    { x: 1400, y: 220, w: 150, h: 20, type: "solid" },
+    { x: 1700, y: 190, w: 110, h: 20, type: "solid" }
+];
+let clouds = [{ x: 100, y: 50, s: 0.5, size: 50 }, { x: 400, y: 80, s: 0.3, size: 70 }, { x: 700, y: 40, s: 0.6, size: 40 }];
+let embers = [{ x: 150, y: 350, s: 1.5, size: 3 }, { x: 350, y: 380, s: 2.2, size: 5 }, { x: 550, y: 360, s: 1.8, size: 4 }];
+// Web Audio Synth Player
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playTone(freq, type, duration) {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator(); const gainNode = audioCtx.createGain();
+    osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    osc.connect(gainNode); gainNode.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + duration);
+}
+function playJumpSound() { playTone(350, "triangle", 0.15); }
+function playCoinSound() { playTone(950, "sine", 0.08); setTimeout(() => playTone(1200, "sine", 0.12), 60); }
+function playDeathSound() { playTone(200, "sawtooth", 0.3); }
+
+// Controls & Interactions Listeners
+window.addEventListener("keydown", (e) => { keysPressed[e.code] = true; });
+window.addEventListener("keyup", (e) => { keysPressed[e.code] = false; });
+
+window.addEventListener("keydown", (e) => {
+    if (isShopOpen || !currentSessionUser) return;
+    if (e.code === "Space" || e.code === "ArrowUp") {
+        e.preventDefault();
+        let allowedJumps = (activeCharacter === "ninja") ? 3 : 2;
+        if (!gameOver && player.jumpsLeft > 0) {
+            player.velocity = player.lift; player.jumpsLeft--; playJumpSound();
+        } else if (gameOver && !isShopOpen) { showMainMenu(); checkDailyReward(); }
+    }
+});
+
+canvas.addEventListener("click", (e) => {
+    if (!gameOver || isShopOpen || !currentSessionUser) return;
+    const rect = canvas.getBoundingClientRect();
+    const clickX = e.clientX - rect.left; const clickY = e.clientY - rect.top;
+    if (clickX >= shopIconBox.x && clickX <= shopIconBox.x + shopIconBox.w &&
+        clickY >= shopIconBox.y && clickY <= shopIconBox.y + shopIconBox.h) { openShop(); }
+});
+
+function handleLogin() {
+    const user = document.getElementById("username-field").value.trim();
+    const pass = document.getElementById("password-field").value.trim();
+    if (user.length < 3 || pass.length < 4) { alert("Invalid entry lengths!"); return; }
+
+    let savedAccounts = JSON.parse(localStorage.getItem("arcadeUsers")) || {};
+    if (savedAccounts[user]) {
+        if (savedAccounts[user].password === pass) {
+            currentSessionUser = user; coinsBank = savedAccounts[user].coins || 0;
+            playerLevel = savedAccounts[user].level || 1; playerXP = savedAccounts[user].xp || 0;
+            isGPUnlocked = savedAccounts[user].gpUnlocked || false;
+            unlockedCharacters = savedAccounts[user].unlocked || ['boy']; activeCharacter = savedAccounts[user].active || 'boy';
+        } else { alert("Incorrect password!"); return; }
+    } else {
+        savedAccounts[user] = { password: pass, coins: 0, level: 1, xp: 0, gpUnlocked: false, unlocked: ['boy'], active: 'boy' };
+        localStorage.setItem("arcadeUsers", JSON.stringify(savedAccounts));
+        currentSessionUser = user; coinsBank = 0; playerLevel = 1; playerXP = 0; isGPUnlocked = false; unlockedCharacters = ['boy']; activeCharacter = 'boy';
+    }
+    if (isGPUnlocked) document.getElementById("gp-lock-text").innerHTML = "✅ UNLOCKED!<br>Tap to Enter Track";
+    document.getElementById("login-overlay").style.display = "none";
+    showMainMenu(); checkDailyReward();
+    setTimeout(() => { canvas.focus(); }, 100); // Forces canvas input alignment focus!
+}
+
+function showMainMenu() {
+    document.getElementById("welcome-message").innerText = `Player Tag: ${currentSessionUser} | Level: ${playerLevel} | Balance: ${coinsBank} 🪙`;
+    document.getElementById("menu-overlay").style.display = "flex";
+}
+
+function checkDailyReward() {
+    if (!currentSessionUser) return;
+    let savedAccounts = JSON.parse(localStorage.getItem("arcadeUsers")) || {};
+    let record = savedAccounts[currentSessionUser];
+    if (record) {
+        let lastClaim = record.lastDailyClaim || 0; let current = Date.now();
+        if (current - lastClaim >= 24 * 60 * 60 * 1000) {
+            coinsBank += 5; record.coins = coinsBank; record.lastDailyClaim = current;
+            localStorage.setItem("arcadeUsers", JSON.stringify(savedAccounts));
+            document.getElementById("welcome-message").innerText = `Player Tag: ${currentSessionUser} | Level: ${playerLevel} | Balance: ${coinsBank} 🪙`;
+            playCoinSound(); alert("🎁 DAILY LOGIN BONUS: +5 Free Coins!");
+        }
+    }
+}
+
+function unlockGrandPrixMode() {
+    if (isGPUnlocked) { startMode('grandprix'); return; }
+    if (coinsBank < 50) { alert("Grand Prix Entry costs 50 Coins! Play Solo or Duels first."); return; }
+    coinsBank -= 50; isGPUnlocked = true;
+    let savedAccounts = JSON.parse(localStorage.getItem("arcadeUsers")) || {};
+    if (savedAccounts[currentSessionUser]) {
+        savedAccounts[currentSessionUser].coins = coinsBank; savedAccounts[currentSessionUser].gpUnlocked = true;
+        localStorage.setItem("arcadeUsers", JSON.stringify(savedAccounts));
+    }
+    document.getElementById("gp-lock-text").innerHTML = "✅ UNLOCKED!<br>Tap to Enter Track";
+    document.getElementById("welcome-message").innerText = `Player Tag: ${currentSessionUser} | Level: ${playerLevel} | Balance: ${coinsBank} 🪙`;
+    playCoinSound(); alert("🏁 GRAND PRIX READY! Click again to start steering!");
+}
+
+function openShop() { isShopOpen = true; document.getElementById("shop-bank-coins").innerText = coinsBank; updateShopModalUI(); document.getElementById("shop-modal").style.display = "block"; }
+function closeShop() { document.getElementById("shop-modal").style.display = "none"; isShopOpen = false; if(!gameOver) showMainMenu(); else render(); }
+
+function handleShopSelection(key) {
+    const char = characters[key];
+    if (char.tier === 2 && playerLevel < 50) { alert("Locked! Reach Level 50 to access Tier 2 characters."); return; }
+    let savedAccounts = JSON.parse(localStorage.getItem("arcadeUsers")) || {};
+    if (unlockedCharacters.includes(key)) { activeCharacter = key; } 
+    else if (coinsBank >= char.cost) {
+        coinsBank -= char.cost; unlockedCharacters.push(key); activeCharacter = key;
+    } else { alert("Need more coins!"); return; }
+    if (savedAccounts[currentSessionUser]) {
+        savedAccounts[currentSessionUser].coins = coinsBank; savedAccounts[currentSessionUser].unlocked = unlockedCharacters; savedAccounts[currentSessionUser].active = activeCharacter;
+        localStorage.setItem("arcadeUsers", JSON.stringify(savedAccounts));
+    }
+    document.getElementById("shop-bank-coins").innerText = coinsBank; updateShopModalUI(); render();
+}
+
+function updateShopModalUI() {
+    Object.keys(characters).forEach(key => {
+        const itemEl = document.getElementById("shop-" + key); if (!itemEl) return;
+        const costEl = itemEl.querySelector(".item-cost");
+        itemEl.className = "shop-item";
+        if (characters[key].tier === 2 && playerLevel < 50) { costEl.innerText = "🔒 Requires Lvl 50"; return; }
+        if (unlockedCharacters.includes(key)) { itemEl.classList.add("owned"); costEl.innerText = "Owned"; } 
+        else { costEl.innerText = characters[key].cost + " Coins"; }
+        if (activeCharacter === key) { itemEl.classList.add("equipped"); costEl.innerText = "Equipped 🌟"; }
+    });
+}
+
+function gainXP(amount) {
+    if (!currentSessionUser) return;
+    playerXP += amount;
+    if (playerXP >= XP_PER_LEVEL) {
+        playerXP -= XP_PER_LEVEL; playerLevel++; playCoinSound(); alert(`🎉 LEVEL UP! You reached Level ${playerLevel}!`);
+    }
+    let savedAccounts = JSON.parse(localStorage.getItem("arcadeUsers")) || {};
+    if (savedAccounts[currentSessionUser]) { savedAccounts[currentSessionUser].level = playerLevel; savedAccounts[currentSessionUser].xp = playerXP; localStorage.setItem("arcadeUsers", JSON.stringify(savedAccounts)); }
+}
+// ==========================================
+// 🎁 DAILY PROFILE ENGAGEMENT LOOPS
+// ==========================================
+
+function checkDailyReward() {
+    if (!currentSessionUser) return;
+    
+    let savedAccounts = JSON.parse(localStorage.getItem("arcadeUsers")) || {};
+    let userRecord = savedAccounts[currentSessionUser];
+    
+    if (userRecord) {
+        let lastClaim = userRecord.lastDailyClaim || 0;
+        let currentTime = Date.now();
+        let oneDayInMs = 24 * 60 * 60 * 1000; // Secure 24-Hour clock cycle gate
+        
+        if (currentTime - lastClaim >= oneDayInMs) {
+            coinsBank += 5; // Reward 5 free tokens
+            userRecord.coins = coinsBank;
+            userRecord.lastDailyClaim = currentTime;
+            
+            localStorage.setItem("arcadeUsers", JSON.stringify(savedAccounts));
+            
+            const shopBank = document.getElementById("shop-bank-coins");
+            if (shopBank) shopBank.innerText = coinsBank;
+            
+            document.getElementById("welcome-message").innerText = `Player Tag: ${currentSessionUser} | Level: ${playerLevel} | Balance: ${coinsBank} 🪙`;
+            
+            playCoinSound();
+            alert("🎁 DAILY LOGIN REWARD! +5 Coins added to your bank profile memory!");
+        }
+    }
+}
+// ==========================================
+// 🏎️ TOURNEY STAKING & REGISTRATION ENGINES
+// ==========================================
+
+function startMode(mode) {
+    if (mode === 'duel' && coinsBank < 10) {
+        alert("Duel Staking Fee is 10 Coins! Run Solo first to harvest more bank funds.");
+        return;
+    }
+    gameMode = mode;
+    document.getElementById("menu-overlay").style.display = "none";
+    if (mode === 'duel') {
+        coinsBank -= 10;
+        botOpponent.progress = 0; botOpponent.y = 290; botOpponent.velocity = 0;
+    }
+    resetGame();
+    
+    // 🎯 FORCE BROWSER FOCUS TO CANVAS WHEN GAME STARTS
+    setTimeout(() => {
+        canvas.focus();
+    }, 50);
+}
+
+function unlockGrandPrixMode() {
+    if (isGPUnlocked) {
+        startMode('grandprix');
+        return;
+    }
+    
+    if (coinsBank < 50) {
+        alert("Grand Prix Entry requires a 50 Coin investment! Play Solo or Duels first.");
+        return;
+    }
+
+    coinsBank -= 50;
+    isGPUnlocked = true;
+    
+    let savedAccounts = JSON.parse(localStorage.getItem("arcadeUsers")) || {};
+    if (savedAccounts[currentSessionUser]) {
+        savedAccounts[currentSessionUser].coins = coinsBank;
+        savedAccounts[currentSessionUser].gpUnlocked = true;
+        localStorage.setItem("arcadeUsers", JSON.stringify(savedAccounts));
+    }
+
+    document.getElementById("gp-lock-text").innerHTML = "✅ UNLOCKED & READY!<br>Tap to Enter Grand Prix Track";
+    document.getElementById("welcome-message").innerText = `Player Tag: ${currentSessionUser} | Level: ${playerLevel} | Balance: ${coinsBank} 🪙`;
+    
+    playCoinSound();
+    alert("🏁 GRAND PRIX UNLOCKED! Click again to start racing!");
+}
+
+// ==========================================
+// 🎪 CHARACTER LOCKER CLASSIFICATION
+// ==========================================
+
+function openShop() {
+    isShopOpen = true;
+    document.getElementById("shop-bank-coins").innerText = coinsBank;
+    updateShopModalUI();
+    document.getElementById("shop-modal").style.display = "block";
+}
+
+function closeShop() {
+    document.getElementById("shop-modal").style.display = "none";
+    isShopOpen = false;
+    if(!gameOver) showMainMenu(); else render();
+}
+
+function handleShopSelection(key) {
+    const char = characters[key];
+    if (char.tier === 2 && playerLevel < 50) {
+        alert("This character model is locked! You must reach Level 50 to access Tier 2 assets.");
+        return;
+    }
+    let savedAccounts = JSON.parse(localStorage.getItem("arcadeUsers")) || {};
+    if (unlockedCharacters.includes(key)) { 
+        activeCharacter = key; 
+    } else if (coinsBank >= char.cost) {
+        coinsBank -= char.cost; unlockedCharacters.push(key); activeCharacter = key;
+    } else { alert("Need more gold coins!"); return; }
+
+    if (savedAccounts[currentSessionUser]) {
+        savedAccounts[currentSessionUser].coins = coinsBank;
+        savedAccounts[currentSessionUser].unlocked = unlockedCharacters;
+        savedAccounts[currentSessionUser].active = activeCharacter;
+        localStorage.setItem("arcadeUsers", JSON.stringify(savedAccounts));
+    }
+    document.getElementById("shop-bank-coins").innerText = coinsBank;
+    updateShopModalUI();
+    render();
+}
+// ==========================================
+// 🏎️ RUNTIME ENVIRONMENT GAME LOOPS
+// ==========================================
+
+function resetGame() {
+    score = 0; sessionCoins = 0; worldProgress = 0; playerSpeedX = 0; gameOver = false;
+    magnetActive = false; invincibilityTimer = 0; activePowerUp = null; powerUpTimer = 0;
+    
+    hasShield = (activeCharacter === 'lion');
+    hasSecondLife = (activeCharacter === 'girl');
+    
+    obstacle.x = canvas.width + 100; obstacle.speed = 6;
+    
+    platforms[0].x = 200;  platforms[1].x = 550;  platforms[2].x = 750;
+    platforms[3].x = 950;  platforms[4].x = 1200; platforms[5].x = 1400; platforms[6].x = 1700;
+    
+    platforms.forEach(p => { p.broken = false; p.timer = 35; });
+    resetCoin();
+    player.x = 80; player.y = 100; player.velocity = 0; player.jumpsLeft = 2;
+    animate();
+}
+
+function resetCoin() {
+    coin.active = true;
+    coin.x = canvas.width + Math.random() * 400 + 200;
+    coin.y = Math.random() > 0.5 ? 180 : 265;
+}
+
+function update() {
+    if (gameOver || isShopOpen) return;
+
+    // --- GRAND PRIX LEFT/RIGHT CONTROLS ---
+    if (gameMode === "grandprix") {
+        if (keysPressed["ArrowLeft"] || keysPressed["KeyA"]) { 
+            playerSpeedX = -4; 
+        } else if (keysPressed["ArrowRight"] || keysPressed["KeyD"]) { 
+            playerSpeedX = 5; 
+        } else { 
+            playerSpeedX *= 0.82; 
+            if (Math.abs(playerSpeedX) < 0.1) playerSpeedX = 0; 
+        }
+        player.x += playerSpeedX;
+        if (player.x < 20) player.x = 20;
+        if (player.x > canvas.width - player.width - 20) player.x = canvas.width - player.width - 20;
+    } else { 
+        player.x = 80; 
+    }
+
+    // --- SHEEP SLOW-FALL ABILITY ---
+    let currentGravity = player.gravity;
+    if (activeCharacter === 'sheep' && player.velocity > 0) { currentGravity = 0.25; }
+    player.velocity += currentGravity; player.y += player.velocity;
+    
+    let runningSpeed = obstacle.speed; 
+    if (activePowerUp === "speed") { runningSpeed = obstacle.speed * 1.6; }
+    worldProgress += runningSpeed;
+    
+    if (invincibilityTimer > 0) { invincibilityTimer--; }
+    if (powerUpTimer > 0) { powerUpTimer--; if (powerUpTimer <= 0) activePowerUp = null; }
+
+    // --- LEVEL 50 PROGRESSION CHANGER ---
+    let isLavaDangerous = (playerLevel >= 50);
+
+    if (player.y >= 290) {
+        if (!isLavaDangerous || activeCharacter === "dragon") {
+            player.y = 290; player.velocity = 0; player.jumpsLeft = (activeCharacter === "ninja") ? 3 : 2;
+        } else {
+            if (invincibilityTimer > 0 || activePowerUp === "speed") { 
+                player.y = 290; player.velocity = 0; player.jumpsLeft = 2; 
+            } else if (hasShield || activePowerUp === "shield") { 
+                if (hasShield) hasShield = false; else activePowerUp = null;
+                invincibilityTimer = 90; player.velocity = -8; playCoinSound(); 
+            } else if (hasSecondLife) { 
+                hasSecondLife = false; invincibilityTimer = 150; player.y = 120; player.velocity = 0; playJumpSound(); alert("✨ REVIVED FROM THE LAVA! ✨"); 
+            } else { 
+                endGameMatch("melted"); return; 
+            }
+        }
+    }
+
+    // --- COIN MAGNET MAGNETISM ---
+    if (activeCharacter === 'magnetMan' || activePowerUp === "magnet") {
+        let diffX = coin.x - (player.x + 20); let diffY = coin.y - (player.y + 25);
+        let distance = Math.sqrt(diffX * diffX + diffY * diffY);
+        if (distance < 220 && coin.active) { 
+            magnetActive = true; coin.x -= (diffX / distance) * 9; coin.y -= (diffY / distance) * 9; 
+        } else { magnetActive = false; }
+    } else { magnetActive = false; }
+
+    // Move Platforms and Crumble Broken Tiles if Level 50+
+    platforms.forEach(plat => {
+        plat.x -= runningSpeed;
+        if (plat.x + plat.w < 0) { plat.x = canvas.width + Math.random() * 300; plat.broken = false; plat.timer = 35; }
+        if (!plat.broken && player.x + player.width > plat.x && player.x < plat.x + plat.w && 
+            player.y + player.height >= plat.y && player.y + player.height <= plat.y + 12 && player.velocity >= 0) {
+                player.y = plat.y - player.height; player.velocity = 0; player.jumpsLeft = (activeCharacter === "ninja") ? 3 : 2;
+                if (plat.type === "broken" && isLavaDangerous) { plat.timer--; if (plat.timer <= 0) { plat.broken = true; playDeathSound(); } }
+        }
+    });
+
+    // Mystery Crates logic
+    itemCrate.x -= runningSpeed;
+    if (itemCrate.x + itemCrate.w < 0 && Math.random() > 0.4) { itemCrate.x = canvas.width + Math.random() * 600 + 300; itemCrate.y = Math.random() > 0.5 ? 150 : 210; itemCrate.active = true; }
+    if (itemCrate.active && player.x < itemCrate.x + itemCrate.w && player.x + player.width > itemCrate.x && player.y < itemCrate.y + itemCrate.h && player.y + player.height > itemCrate.y) {
+        itemCrate.active = false; playCoinSound();
+        let roll = Math.random();
+        if (roll < 0.33) { activePowerUp = "shield"; alert("📦 MYSTERY BOX: Shield Equipped!"); } 
+        else if (roll < 0.66) { activePowerUp = "speed"; alert("📦 MYSTERY BOX: Speed Rocket Engine On!"); } 
+        else { activePowerUp = "magnet"; alert("📦 MYSTERY BOX: Coin Vacuum Activated!"); }
+        powerUpTimer = 300;
+    }
+
+    obstacle.x -= runningSpeed;
+    if (obstacle.x + obstacle.width < 0) { obstacle.x = canvas.width + Math.random() * 200; score++; obstacle.speed += 0.3; gainXP(20); }
+    if (!magnetActive) { coin.x -= runningSpeed; }
+    coin.pulse += 0.1; if (coin.x + coin.radius < 0) { resetCoin(); }
+
+    // Crash check
+    if (player.x < obstacle.x + obstacle.width && player.x + player.width > obstacle.x && player.y < obstacle.y + obstacle.height && player.y + player.height > obstacle.y) {
+        if (invincibilityTimer > 0 || activePowerUp === "speed") {} 
+        else if (hasShield || activePowerUp === "shield") { if (hasShield) hasShield = false; else activePowerUp = null; invincibilityTimer = 90; obstacle.x = canvas.width + 300; playCoinSound(); } 
+        else if (hasSecondLife) { hasSecondLife = false; invincibilityTimer = 150; obstacle.x = canvas.width + 300; player.y = 150; player.velocity = 0; playJumpSound(); alert("✨ RESURRECTED! ✨"); } 
+        else { endGameMatch("crashed"); }
+    }
+
+    if (coin.active && player.x < coin.x + coin.radius && player.x + player.width > coin.x - coin.radius && player.y < coin.y + coin.radius && player.y + player.height > coin.y - coin.radius) {
+        coin.active = false; sessionCoins++; score += 5; playCoinSound();
+    }
+
+    if (gameMode === "duel" || gameMode === "grandprix") {
+        botOpponent.progress += botOpponent.speed;
+        if (obstacle.x > player.x && obstacle.x < player.x + 180 && botOpponent.grounded) { if (Math.random() > 0.4) { botOpponent.velocity = player.lift; botOpponent.grounded = false; } }
+        botOpponent.velocity += player.gravity; botOpponent.y += botOpponent.velocity;
+        if (botOpponent.y >= 230) { botOpponent.y = 230; botOpponent.velocity = 0; botOpponent.grounded = true; }
+        if (worldProgress >= finishLineX) endGameMatch("victory");
+        else if (botOpponent.progress >= finishLineX) endGameMatch("defeated");
+    }
+}
+// ==========================================
+// 🎨 CANVASES ART LAYER GRAPHICS ENGINE
+// ==========================================
+
+function endGameMatch(result) {
+    gameOver = true;
+    if (result === "victory" && gameMode === "duel") { 
+        coinsBank += 20; matchStatusMessage = "🎉 DUEL VICTORY! EARNED +20 COINS!"; 
+    }
+    else if (result === "victory" && gameMode === "grandprix") { 
+        coinsBank += 50; matchStatusMessage = "🏆 GRAND PRIX CHAMPION! WIN +50 COINS!"; 
+    }
+    else if (result === "defeated") { 
+        matchStatusMessage = "❌ OUTRUN BY THE BOT! STAKE LOST."; 
+    }
+    else if (result === "melted") { 
+        matchStatusMessage = "🌋 MELTED IN THE LAVA ARENA CRATER!"; 
+    }
+    
+    else { 
+        coinsBank += sessionCoins; matchStatusMessage = "GAME OVER - CRASHED!"; 
+    }
+
+    let savedAccounts = JSON.parse(localStorage.getItem("arcadeUsers")) || {};
+    if (savedAccounts[currentSessionUser]) { 
+        savedAccounts[currentSessionUser].coins = coinsBank; 
+        localStorage.setItem("arcadeUsers", JSON.stringify(savedAccounts)); 
+    }
+    playDeathSound();
+}
+
+function render() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let isLavaDangerous = (playerLevel >= 50);
+    
+    // --- SKIES SCENERY DRAW CONTEXT ---
+    if (!isLavaDangerous && gameMode === "solo") {
+        let skyGrad = ctx.createLinearGradient(0, 0, 0, 400); skyGrad.addColorStop(0, "#4a90e2"); skyGrad.addColorStop(1, "#70c5ce");
+        ctx.fillStyle = skyGrad; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        clouds.forEach(c => {
+            ctx.beginPath(); ctx.arc(c.x, c.y, c.size, 0, Math.PI * 2);
+            ctx.arc(c.x + c.size * 0.6, c.y - c.size * 0.2, c.size * 0.8, 0, Math.PI * 2);
+            ctx.arc(c.x + c.size * 1.2, c.y, c.size * 0.6, 0, Math.PI * 2); ctx.fill();
+        });
+    } else {
+        let lavaGrad = ctx.createLinearGradient(0, 0, 0, 400); lavaGrad.addColorStop(0, "#110b11"); lavaGrad.addColorStop(1, "#5a191f");
+        ctx.fillStyle = lavaGrad; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        embers.forEach(e => { ctx.beginPath(); ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2); ctx.fill(); });
+    }
+
+    // --- molten lava ground graphics conditional render ---
+    if (isLavaDangerous) {
+        let lavaSurfaceGrad = ctx.createLinearGradient(0, 340, 0, 400);
+        lavaSurfaceGrad.addColorStop(0, "#ff3d00"); lavaSurfaceGrad.addColorStop(1, "#210002");
+        ctx.fillStyle = lavaSurfaceGrad; ctx.fillRect(0, 340, canvas.width, 60);
+    } else { 
+        ctx.fillStyle = "#388e3c"; ctx.fillRect(0, 340, canvas.width, 60); 
+    }
+
+    // --- SCENIC RUNNING PLATFORMS ART ---
+    platforms.forEach(plat => {
+        if (plat.broken) return;
+        if (plat.type === "broken" && isLavaDangerous) {
+            ctx.fillStyle = "#e65100"; ctx.fillRect(plat.x, plat.y, plat.w, plat.h);
+            ctx.fillStyle = "#ffb74d";
+            if (plat.timer < 20) { ctx.fillRect(plat.x + (plat.w/3), plat.y, 4, plat.h); ctx.fillRect(plat.x + (plat.w/1.5), plat.y, 4, plat.h); }
+        } else {
+            ctx.fillStyle = (gameMode === "solo" && !isLavaDangerous) ? "#5d4037" : "#372c3e"; ctx.fillRect(plat.x, plat.y, plat.w, plat.h);
+        }
+    });
+
+    if (itemCrate.active) {
+        ctx.fillStyle = "#ffb300"; ctx.fillRect(itemCrate.x, itemCrate.y, itemCrate.w, itemCrate.h);
+    }
+
+    // --- VISUAL POWER-UP BUFF HALO SPELLS ---
+    if (!gameOver) {
+        if ((activeCharacter === 'lion' && hasShield) || activePowerUp === "shield") {
+            ctx.beginPath(); ctx.arc(player.x + 20, player.y + 25, 32, 0, Math.PI * 2);
+            ctx.strokeStyle = "#ff9800"; ctx.lineWidth = 3; ctx.stroke(); ctx.closePath();
+        }
+        if (activeCharacter === 'girl' && hasSecondLife) { ctx.font = "16px Arial"; ctx.fillText("❤️", player.x + 12, player.y - 8); }
+        if (activePowerUp === "speed") { ctx.font = "14px Arial"; ctx.fillText("⚡", player.x - 15, player.y + 25); }
+    }
+
+    // Render User Player Character Model Skin Avatar
+    if (!(invincibilityTimer > 0 && Math.floor(invincibilityTimer / 4) % 2 === 0)) {
+        const currentInfo = characters[activeCharacter] || {label: "👦"};
+        ctx.font = "38px Arial"; ctx.fillText(currentInfo.label, player.x, player.y + 38);
+    }
+
+    // Magnet Vacuum Area Ring Effect (Magnet Man / Buff item)
+    if ((activeCharacter === 'magnetMan' || activePowerUp === "magnet") && !gameOver) {
+        ctx.beginPath(); ctx.arc(player.x + 20, player.y + 25, 220, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(33, 150, 243, 0.2)"; ctx.stroke(); ctx.closePath();
+    }
+
+    // Draw Rival Opponent Bot
+    if (gameMode === "duel" || gameMode === "grandprix") {
+        let botScreenX = player.x + (botOpponent.progress - worldProgress);
+        if (botScreenX > 0 && botScreenX < canvas.width) { ctx.font = "38px Arial"; ctx.fillText(botOpponent.label, botScreenX, botOpponent.y + 38); }
+    }
+
+    ctx.fillStyle = "#d32f2f"; ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+
+    if (coin.active) {
+        ctx.beginPath(); ctx.arc(coin.x, coin.y, coin.radius, 0, Math.PI * 2); ctx.fillStyle = "#ffd700"; ctx.fill(); ctx.closePath();
+    }
+
+    // Live Dashboard Heads-up displays
+    ctx.fillStyle = "#fff"; ctx.font = "bold 15px Arial";
+    ctx.fillText(`Player: ${currentSessionUser} | Lvl: ${playerLevel} (${playerXP} XP) | Mode: ${gameMode.toUpperCase()}`, 20, 30);
+    ctx.fillText(`Bank Balance: ${coinsBank} 🪙`, 20, 55);
+
+    if (gameMode === "duel" || gameMode === "grandprix") {
+        ctx.fillStyle = "rgba(255,255,255,0.3)"; ctx.fillRect(250, 15, 300, 10);
+        ctx.fillStyle = "#4a90e2"; ctx.fillRect(250, 15, (worldProgress/finishLineX)*300, 10); 
+        ctx.fillStyle = "#e91e63"; ctx.fillRect(250, 25, (botOpponent.progress/finishLineX)*300, 5); 
+    }
+
+    // Loss Event Screen Overlay Container Panels
+    if (gameOver) {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.75)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#fff"; ctx.font = "bold 32px Arial"; ctx.textAlign = "center";
+        let finalDisplayMsg = matchStatusMessage;
+        if (matchStatusMessage.includes("CRASHED") && player.y >= 290) { finalDisplayMsg = "🌋 MELTED IN THE LAVA ARENA CRATER!"; }
+        ctx.fillText(finalDisplayMsg, canvas.width / 2, canvas.height / 2 - 40);
+        ctx.fillStyle = "#ffd700"; ctx.fillRect(shopIconBox.x, shopIconBox.y, shopIconBox.w, shopIconBox.h);
+        ctx.font = "36px Arial"; ctx.fillText("🛒", canvas.width / 2, shopIconBox.y + 48);
+        ctx.textAlign = "start";
+    }
+}
+
+function animate() {
+    update(); render();
+    if (!gameOver && !isShopOpen && currentSessionUser) { requestAnimationFrame(animate); }
+}
+
+// TIMED CINEMATIC SPLASH INTRO COUNTDOWN TRANSITION HANDLER
+function runWelcomeSplashTransition() {
+    const splashScreen = document.getElementById("splash-welcome");
+    setTimeout(() => {
+        splashScreen.style.opacity = "0";
+        setTimeout(() => { splashScreen.style.display = "none"; }, 1000);
+    }, 5000); 
+}
+window.addEventListener("load", runWelcomeSplashTransition);
+</script>
+</body>
+</html>
