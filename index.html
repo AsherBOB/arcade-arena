@@ -3,822 +3,524 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcade Arena NG - Progression Edition</title>
+    <title>TokMatrix - Publisher Exchange & Ads Portal</title>
     <style>
+        :root {
+            --bg-dark: #010101;
+            --bg-card: #0d0d12;
+            --tok-cyan: #00f2fe;
+            --tok-pink: #fe0943;
+            --text-white: #ffffff;
+            --text-grey: #a6a6b2;
+            --gold: #ffd700;
+            --success: #16a34a;
+            --error: #dc2626;
+            --border: #1f1f2e;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+        }
+
         body {
             margin: 0;
-            background: #1e1e2f;
+            background: var(--bg-dark);
+            color: var(--text-white);
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
-            user-select: none;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 20px;
+            box-sizing: border-box;
         }
-        #game-wrapper {
+
+        /* 🎬 ANIMATED INTRO SPLASH OVERLAY */
+        #splash-welcome {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000000;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease-in-out;
+        }
+        .splash-logo {
+            font-size: 70px;
+            animation: pulseGlow 1.5s infinite ease-in-out;
+        }
+        @keyframes pulseGlow {
+            0% { transform: scale(0.95); filter: drop-shadow(0 0 10px var(--tok-cyan)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 25px var(--tok-pink)); }
+            100% { transform: scale(0.95); filter: drop-shadow(0 0 10px var(--tok-cyan)); }
+        }
+
+        /* App Layout Container Setup */
+        .app-container {
+            width: 100%;
+            max-width: 440px;
             position: relative;
         }
-        canvas {
-            border: 6px solid #fff;
+
+        /* 📺 ADVERTISING SLOT LAYOUT WIRES */
+        .ad-slot-wrapper {
+            width: 100%;
+            background: #111116;
+            border: 1px dashed #3a3a4f;
             border-radius: 12px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-            display: block;
-        }
-        #shop-modal {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 450px;
-            background: rgba(30, 30, 47, 0.95);
-            border: 4px solid #ffd700;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
-            color: white;
-            text-align: center;
+            padding: 12px;
             box-sizing: border-box;
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .ad-label-tag {
+            position: absolute;
+            top: 0; left: 0;
+            background: #2a2a35;
+            color: var(--text-grey);
+            font-size: 9px;
+            padding: 2px 6px;
+            text-transform: uppercase;
+            font-weight: bold;
+            border-bottom-right-radius: 6px;
             z-index: 10;
         }
-        #shop-modal h2 {
-            margin-top: 0;
-            color: #ffd700;
-            font-size: 28px;
-        }
-        .bank-info {
-            font-size: 18px;
-            margin-bottom: 20px;
-            color: #a0aec0;
-        }
-        .shop-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .shop-item {
-            background: #2d2d44;
-            border: 2px solid #444;
-            border-radius: 10px;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .shop-item:hover {
-            transform: translateY(-2px);
-            background: #3d3d5c;
-        }
-        .shop-item.owned {
-            border-color: #4caf50;
-        }
-        .shop-item.equipped {
-            border-color: #ffd700;
-            background: #4a90e2;
-        }
-        .item-avatar {
-            font-size: 40px;
-            margin-bottom: 5px;
-        }
-        .item-name {
+        .ad-placeholder-content {
+            min-height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #5a5a75;
+            font-size: 12px;
             font-weight: bold;
-            font-size: 16px;
+            letter-spacing: 1px;
         }
-        .item-cost {
-            font-size: 14px;
-            color: #ffd700;
-            margin-top: 5px;
+
+        .hud-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
         }
-        .close-btn {
-            background: #ff5722;
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
+
+        .balance-box h2 {
+            margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-grey);
         }
-        .close-btn:hover {
-            background: #f44336;
+        .balance-amount {
+            font-size: 26px; font-weight: 800; color: var(--gold); margin-top: 2px;
         }
+
+        .menu-trigger-btn {
+            background: #1c1c24; border: 1px solid var(--border); color: white;
+            padding: 10px 16px; border-radius: 12px; font-weight: bold;
+            cursor: pointer; font-size: 13px; transition: border-color 0.2s;
+        }
+        .menu-trigger-btn:hover { border-color: var(--tok-cyan); }
+
+        .main-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px;
+            padding: 30px 24px; text-align: center; box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+
+        .avatar-frame {
+            width: 85px; height: 85px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--tok-cyan), var(--tok-pink));
+            margin: 0 auto 15px; display: flex; justify-content: center; align-items: center;
+            font-size: 38px; box-shadow: 0 0 20px rgba(0, 242, 254, 0.2);
+        }
+        .username-display { font-size: 22px; font-weight: 700; margin: 0 0 5px 0; }
+        .task-status { font-size: 12px; color: var(--tok-cyan); font-weight: 600; text-transform: uppercase; margin-bottom: 25px; }
+
+        .action-btn-container { position: relative; width: 100%; max-width: 280px; margin: 0 auto 16px; }
+        .glitch-shadow-cyan { position: absolute; top: -2px; left: -3px; width: 100%; height: 100%; background: var(--tok-cyan); border-radius: 14px; z-index: 1; }
+        .glitch-shadow-pink { position: absolute; top: 3px; left: 3px; width: 100%; height: 100%; background: var(--tok-pink); border-radius: 14px; z-index: 1; }
+        
+        .action-button {
+            position: relative; z-index: 2; width: 100%; background: #000000; border: none; border-radius: 14px;
+            padding: 14px 0; color: var(--text-white); font-size: 16px; font-weight: 900; letter-spacing: 1px;
+            text-transform: uppercase; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+
+        .payout-sparkle {
+            position: absolute; color: var(--gold); font-weight: bold; font-size: 18px; pointer-events: none;
+            animation: floatUp 0.8s forwards; z-index: 99;
+        }
+        @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-55px); opacity: 0; } }
+
+        /* 📋 SIDE DRAWER SYSTEM SLIDER OVERLAY */
+        .side-drawer {
+            position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100vh;
+            background: #09090d; border-left: 1px solid var(--border); z-index: 10000;
+            box-shadow: -10px 0 40px rgba(0,0,0,0.8); transition: right 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            padding: 30px 24px; box-sizing: border-box; overflow-y: auto;
+        }
+        .side-drawer.open { right: 0; }
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .drawer-close { background: none; border: none; color: var(--text-grey); font-size: 24px; cursor: pointer; }
+
+        .drawer-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        .drawer-tab-btn { background: none; border: none; color: var(--text-grey); padding: 8px 12px; font-weight: bold; cursor: pointer; font-size: 14px; }
+        .drawer-tab-btn.active { color: var(--tok-cyan); border-bottom: 2px solid var(--tok-cyan); }
+
+        .form-group { margin-bottom: 18px; }
+        
+        /* ℹ️ HELPER TOOLTIP STYLES */
+        .label-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+            position: relative;
+        }
+        .form-label { font-size: 13px; font-weight: 600; color: var(--text-grey); margin: 0; }
+        
+        .info-icon {
+            display: inline-flex; justify-content: center; align-items: center; width: 15px; height: 15px;
+            border-radius: 50%; background: #1f1f2e; border: 1px solid #3a3a4f; color: var(--tok-cyan);
+            font-size: 10px; font-weight: bold; cursor: pointer; position: relative;
+        }
+        .info-icon:hover { background: var(--tok-cyan); color: black; border-color: var(--tok-cyan); }
+
+        .tooltip-text {
+            visibility: hidden; width: 220px; background-color: #1a1a24; color: #fff; text-align: left;
+            border-radius: 8px; padding: 10px; position: absolute; z-index: 10001; bottom: 125%; left: 50%;
+            transform: translateX(-50%); opacity: 0; transition: opacity 0.2s; font-size: 11px; font-weight: normal;
+            line-height: 1.4; border: 1px solid #3a3a4f; box-shadow: 0 4px 15px rgba(0,0,0,0.5); pointer-events: none;
+        }
+        .info-icon:hover .tooltip-text { visibility: visible; opacity: 1; }
+
+        .input-box { width: 100%; padding: 12px; border: 1px solid var(--border); background: #121216; border-radius: 8px; font-size: 14px; color: white; box-sizing: border-box; }
+        .input-box:focus { outline: none; border-color: var(--primary); }
+
+        .sub-box { background: #121216; border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 20px; font-size: 13px; }
+        .sub-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
+        .sub-row.total { border-top: 1px dashed var(--border); padding-top: 8px; font-weight: bold; }
+
+        .locked-notice { background: rgba(220,38,38,0.1); border: 1px solid var(--error); padding: 12px; border-radius: 8px; color: #ff6b6b; font-size: 12px; text-align: center; margin-bottom: 15px; display: none; }
     </style>
 </head>
 <body>
 
-<!-- 🎬 ANIMATED SPLASH WELCOME SCREEN -->
-<div id="splash-welcome" style="position: absolute; width: 100vw; height: 100vh; background: #0b0b0e; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; top: 0; left: 0; transition: opacity 1s ease-in-out;">
-    <div style="text-align: center; animation: pulseGlow 2s infinite ease-in-out;">
-        <div style="font-size: 80px; margin-bottom: 15px; filter: drop-shadow(0 0 20px rgba(74, 144, 226, 0.5));">🏟️</div>
-        <h1 style="color: #ffffff; font-size: 42px; margin: 0; letter-spacing: 3px; font-weight: bold; font-family: 'Segoe UI', sans-serif;">NG ARCADE ARENA</h1>
-        <p style="color: #4a90e2; font-size: 16px; margin: 10px 0 0 0; font-weight: bold; letter-spacing: 6px; text-transform: uppercase;">Loading Universe...</p>
+    <!-- 🎬 SPLASH OVERLAY LAYER -->
+    <div id="splash-welcome">
+        <div class="splash-logo">🏟️</div>
+        <h1 style="font-size:24px; letter-spacing:2px; margin-top:10px;">TOKMATRIX NET</h1>
+        <p style="color:var(--tok-cyan); font-size:12px; letter-spacing:4px; text-transform:uppercase;">Loading Ecosystem...</p>
     </div>
-    <style>
-        @keyframes pulseGlow {
-            0% { transform: scale(0.96); opacity: 0.8; }
-            50% { transform: scale(1.02); opacity: 1; filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.3)); }
-            100% { transform: scale(0.96); opacity: 0.8; }
-        }
-    </style>
-</div>
-
-<!-- SECURE LOGIN SCREEN OVERLAY -->
-<div id="login-overlay" style="position: absolute; width: 100vw; height: 100vh; background: #121214; z-index: 999; display: flex; justify-content: center; align-items: center; top: 0; left: 0;">
-    <div style="background: #202024; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; width: 320px; border: 1px solid #323238;">
-        <h2 style="color: #4a90e2; margin-bottom: 20px; font-size: 24px;">🎮 Arcade Hub NG</h2>
-        <p style="color: #8d8d99; font-size: 14px; margin-bottom: 25px;">Log in or create a player profile to secure your coins bank.</p>
-        <input type="text" id="username-field" placeholder="Username / Player Tag" style="width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #323238; background: #121214; color: white; box-sizing: border-box;">
-        <input type="password" id="password-field" placeholder="Security Pin / Password" style="width: 100%; padding: 12px; margin-bottom: 25px; border-radius: 6px; border: 1px solid #323238; background: #121214; color: white; box-sizing: border-box;">
-        <button onclick="handleLogin()" style="width: 100%; padding: 14px; background: #388e3c; color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; font-size: 16px;">Enter Arcade Room</button>
-    </div>
-</div>
-<div id="game-wrapper">
-    <!-- 🎯 TABINDEX FIXED: Enables instant keyboard capture focus when clicked -->
-    <canvas id="gameCanvas" width="800" height="400" tabindex="1" style="outline: none;"></canvas>
-
-    <!-- 🏠 MAIN MENU HOME SCREEN OVERLAY -->
-    <div id="menu-overlay" style="position: absolute; top: 0; left: 0; width: 800px; height: 400px; background: rgba(20, 20, 30, 0.95); border-radius: 12px; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; box-sizing: border-box; border: 6px solid #fff; z-index: 5;">
-        <h1 style="color: #ffd700; margin-bottom: 5px; font-size: 36px; text-shadow: 0 4px 10px rgba(0,0,0,0.5); font-weight: bold;">🏟️ NG ARCADE ARENA</h1>
-        <p id="welcome-message" style="color: #a0aec0; margin-bottom: 30px; font-size: 16px;">Welcome, Player</p>
+    <div class="app-container">
         
-        <div style="display: flex; gap: 20px; align-items: center;">
-            <div onclick="startMode('solo')" style="background: #2d2d44; border: 2px solid #4a90e2; padding: 15px; border-radius: 12px; text-align: center; width: 150px; cursor: pointer;">
-                <div style="font-size: 32px; margin-bottom: 5px;">🏃</div>
-                <h3 style="margin: 0 0 5px 0; color: #4a90e2; font-weight: bold; font-size: 15px;">SOLO RUN</h3>
-                <p style="margin: 0; font-size: 11px; color: #a0aec0;">Practice skills & gather coins</p>
-            </div>
-
-            <div onclick="startMode('duel')" style="background: #2d2d44; border: 2px solid #e91e63; padding: 15px; border-radius: 12px; text-align: center; width: 150px; cursor: pointer;">
-                <div style="font-size: 32px; margin-bottom: 5px;">⚔️</div>
-                <h3 style="margin: 0 0 5px 0; color: #e91e63; font-weight: bold; font-size: 15px;">DUEL ARENA</h3>
-                <p style="margin: 0; font-size: 11px; color: #a0aec0;">Bet 10 Coins vs Bot racer</p>
-            </div>
-
-            <!-- 🏎️ INTERACTIVE GRAND PRIX CARD -->
-            <div onclick="unlockGrandPrixMode()" style="background: linear-gradient(135deg, #ff9800, #ff5722); border: 2px solid #fff; padding: 15px; border-radius: 12px; text-align: center; width: 150px; cursor: pointer; box-shadow: 0 4px 15px rgba(255,87,34,0.3);">
-                <div style="font-size: 32px; margin-bottom: 5px;">🏎️</div>
-                <h3 style="margin: 0 0 5px 0; color: #fff; font-weight: bold; font-size: 15px;">GRAND PRIX</h3>
-                <p id="gp-lock-text" style="margin: 0; font-size: 10px; color: #fff; font-weight: bold;">🔒 UNLOCK: 50 COINS<br>(Full Manual Steering)</p>
+        <!-- 📺 TOP AD BANNER CONTAINER -->
+        <div class="ad-slot-wrapper" id="top-ad-banner">
+            <span class="ad-label-tag">Ad Matrix</span>
+            <div class="ad-placeholder-content" id="yllix-top-holder">
+                [ PENDING LIVE AD FRAME ]
             </div>
         </div>
-        
-        <button onclick="openShop()" style="margin-top: 25px; background: transparent; border: 1px solid #ffd700; color: #ffd700; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-weight: bold;">🎪 Open Locker / Character Shop</button>
-    </div>
 
-    <!-- POPUP ARCADE SHOP -->
-    <div id="shop-modal">
-        <h2>🎪 Character Shop 🎪</h2>
-        <div class="bank-info">Your Bank: <span id="shop-bank-coins">0</span> 🪙</div>
-        
-        <div class="shop-grid">
-            <button class="close-btn" onclick="closeShop()">Close & Return</button>
-            <div class="shop-item equipped" id="shop-boy" onclick="handleShopSelection('boy')">
-                <div class="item-avatar">👦</div>
-                <div class="item-name">Boy (T1)</div>
-                <div class="item-cost">Equipped</div>
+        <!-- HEADER HUD MATRIX -->
+        <div class="hud-panel">
+            <div class="balance-box">
+                <h2>Points Pool Balance</h2>
+                <div class="balance-amount"><span id="balance-points">0</span> PTS</div>
             </div>
-            <div class="shop-item" id="shop-girl" onclick="handleShopSelection('girl')">
-                <div class="item-avatar">👧</div>
-                <div class="item-name">Girl (T1)</div>
-                <div class="item-cost">5 Coins</div>
+            <button class="menu-trigger-btn" onclick="openDrawerMenu()">🎪 Open Wallet Menu</button>
+        </div>
+
+        <!-- SOCIAL EARN ACTION PANEL CARD -->
+        <div class="main-card">
+            <div class="avatar-frame" id="avatar-emoji">👤</div>
+            <h3 class="username-display" id="user-display">@loading_racer</h3>
+            <div class="task-status" id="action-hint">Waiting Action Sequence</div>
+
+            <div class="action-btn-container">
+                <div class="glitch-shadow-cyan"></div><div class="glitch-shadow-pink"></div>
+                <button class="action-button" onclick="allocateClickReward(this, 'FOLLOW')">Follow</button>
             </div>
-            <div class="shop-item" id="shop-sheep" onclick="handleShopSelection('sheep')">
-                <div class="item-avatar">🐑</div>
-                <div class="item-name">Sheep (T1)</div>
-                <div class="item-cost">15 Coins</div>
+            <div class="action-btn-container">
+                <div class="glitch-shadow-cyan"></div><div class="glitch-shadow-pink"></div>
+                <button class="action-button" onclick="allocateClickReward(this, 'LIKE')">Like</button>
             </div>
-            <div class="shop-item" id="shop-lion" onclick="handleShopSelection('lion')">
-                <div class="item-avatar">🦁</div>
-                <div class="item-name">Lion (T1)</div>
-                <div class="item-cost">30 Coins</div>
-            </div>
-            <div class="shop-item" id="shop-magnetMan" onclick="handleShopSelection('magnetMan')">
-                <div class="item-avatar">🧲</div>
-                <div class="item-name">Magnet (T2)</div>
-                <div class="item-cost">🔒 Lvl 50</div>
-            </div>
-            <div class="shop-item" id="shop-ninja" onclick="handleShopSelection('ninja')">
-                <div class="item-avatar">🥷</div>
-                <div class="item-name">Ninja (T2)</div>
-                <div class="item-cost">🔒 Lvl 50</div>
-            </div>
-            <div class="shop-item" id="shop-dragon" onclick="handleShopSelection('dragon')">
-                <div class="item-avatar">🐉</div>
-                <div class="item-name">Dragon (T2)</div>
-                <div class="item-cost">🔒 Lvl 50</div>
+            <div class="action-btn-container">
+                <div class="glitch-shadow-cyan"></div><div class="glitch-shadow-pink"></div>
+                <button class="action-button" onclick="allocateClickReward(this, 'SHARE')">Share</button>
             </div>
         </div>
-        
-    </div>
-</div>
 
+        <!-- 📺 BOTTOM AD BANNER CONTAINER -->
+        <div class="ad-slot-wrapper" id="bottom-ad-banner">
+            <span class="ad-label-tag">Ad Matrix</span>
+            <div class="ad-placeholder-content" id="yllix-bottom-holder">
+                [ PENDING LIVE AD FRAME ]
+            </div>
+        </div>
+
+    </div>
+    <!-- 📋 SIDE SLIDER DRAWER CONTAINER OVERLAY -->
+    <div id="wallet-drawer" class="side-drawer">
+        <div class="drawer-header">
+            <h3 style="margin:0; font-size:18px;">Operations Command</h3>
+            <button class="drawer-close" onclick="closeDrawerMenu()">×</button>
+        </div>
+
+        <div class="drawer-tabs">
+            <button id="tab-btn-withdraw" class="drawer-tab-btn active" onclick="switchDrawerTab('withdraw')">💰 Cashout</button>
+            <button id="tab-btn-publish" class="drawer-tab-btn" onclick="switchDrawerTab('publish')">📣 Publish Ads</button>
+        </div>
+
+        <!-- MODULE A: WITHDRAWAL CONTROLLER PANEL -->
+        <div id="panel-withdraw">
+            <div class="sub-box" style="text-align:center;">
+                <div style="color:var(--text-grey); font-size:12px;">Available Balance Valuation</div>
+                <div style="font-size:24px; font-weight:bold; color:var(--gold); margin:4px 0;"><span id="drawer-pts">0</span> PTS</div>
+                <div style="color:var(--tok-cyan); font-size:11px;">Real Cash Value: <span id="drawer-cash-val">0.00</span> ₦</div>
+            </div>
+
+            <div class="form-group">
+                <div class="label-wrapper">
+                    <label class="form-label">Points to Liquidate</label>
+                </div>
+                <input type="number" id="withdraw-input" class="input-box" placeholder="Min: 100 Points" min="100">
+            </div>
+
+            <div id="lock-notice-box" class="locked-notice">
+                🔒 ACCESS DENIED: Payout pathways are restricted until your wallet crosses the minimum milestone parameter of 100 Points!
+            </div>
+
+            <div class="form-group">
+                <div class="label-wrapper">
+                    <label class="form-label">Destination Payout Account</label>
+                    <!-- ℹ️ Info Icon for Withdrawal Destination -->
+                    <div class="info-icon">i
+                        <span class="tooltip-text">Input your precise bank code records (e.g., GTBank, 0123456789). Ensure account name details match perfectly to prevent validation hold delays.</span>
+                    </div>
+                </div>
+                <input type="text" id="payout-target" class="input-box" placeholder="Bank Name / Account Number">
+            </div>
+
+            <div class="sub-box">
+                <div class="sub-row"><span>Conversion Ratio</span><span>1 Point = 0.50 ₦</span></div>
+                <div class="sub-row total"><span>Receivable Payout</span><span id="receive-net">0.00 ₦</span></div>
+            </div>
+
+            <button class="btn-withdraw" id="submit-payout-btn" onclick="processWithdrawalAction()">Request Settlement Payout</button>
+        </div>
+
+        <!-- MODULE B: PUBLISHER DEPOSIT ADVERTISER CAMPAIGN PANEL -->
+        <div id="panel-publish" style="display:none;">
+            <p style="font-size:12px; color:var(--text-grey); margin-top:0;">Submit your account handle configurations. Ads go live across active dashboards immediately upon bank transfer alert confirmation reviews.</p>
+            
+            <div class="form-group">
+                <div class="label-wrapper">
+                    <label class="form-label">Target Social Account Handle</label>
+                </div>
+                <input type="text" id="pub-username" class="input-box" placeholder="e.g., @creators_hub">
+            </div>
+
+            <div class="form-group">
+                <div class="label-wrapper">
+                    <label class="form-label">Sender Identity & Payment Details</label>
+                    
+                    <div class="info-icon">i
+                        <span class="tooltip-text">Enter the exact name listed on the banking app transaction receipt. This helps us match your transfer quickly so your campaign can be activated instantly.</span>
+                    </div>
+                </div>
+                <input type="text" id="pub-payment-details" class="input-box" placeholder="Your Name & Bank transfer info">
+            </div>
+
+            <div class="sub-box" style="border-color:var(--tok-cyan);">
+                <div style="font-weight:bold; color:var(--tok-cyan); margin-bottom:4px;">🏦 Bank Deposit Pipeline Instructions</div>
+                Transfer exactly <b>5,000 ₦</b> to Account: <b>1234567890</b> (Apex Bank). Input the confirmation parameters above to launch traffic tracking.
+            </div>
+
+            <button class="btn-withdraw" style="background-color:var(--success);" onclick="processPublisherCampaignSubmit()">Submit Deposit Registry</button>
+        </div>
+    </div>
 <script>
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+    // ========================================================
+    // PART 4: SYSTEM RUNTIME VARIABLES & REWARD GENERATORS
+    // ========================================================
+    let userPointsScore = 0; 
+    const CONVERSION_RATE = 0.50; // 1 Point yields exactly 0.50 NGN
+    const MINIMUM_CASHOUT_POINTS = 100;
 
-// Game State Storage Engine
-let score = 0;
-let coinsBank = 0;
-let sessionCoins = 0;
-let gameOver = false;
-let isShopOpen = false;
-let currentSessionUser = null;
+    const firstNames = ["Asher", "Bob", "Chidi", "Tunde", "Amaka", "Zainab", "Funmi", "David", "Ngozi", "Emeka"];
+    const tags = ["_vibe", "racer", "001", ".dx", "hq"];
+    const avatarEmojis = ["🤠", "🥷", "🦖", "👽", "🤖", "🚀", "⭐"];
 
-// Track Level Variables
-let gameMode = "solo"; 
-let finishLineX = 5000; 
-let worldProgress = 0; 
-let matchStatusMessage = "";
-
-// Level Progress Parameters
-let playerLevel = 1;
-let playerXP = 0;
-const XP_PER_LEVEL = 100;
-
-// Grand Prix Control Vectors
-let isGPUnlocked = false;
-let playerSpeedX = 0;
-let keysPressed = {};
-
-const characters = {
-    boy:       { label: "👦", cost: 0,   tier: 1 },
-    girl:      { label: "👧", cost: 5,   tier: 1 },
-    sheep:     { label: "🐑", cost: 15,  tier: 1 },
-    lion:      { label: "🦁", cost: 30,  tier: 1 },
-    magnetMan: { label: "🧲", cost: 50,  tier: 2 },
-    ninja:     { label: "🥷", cost: 80,  tier: 2 },
-    dragon:    { label: "🐉", cost: 120, tier: 2 }
-};
-let unlockedCharacters = ['boy'];
-let activeCharacter = 'boy';
-
-// Entity Configurations
-const player = { x: 80, y: 290, width: 40, height: 50, gravity: 0.6, lift: -12, velocity: 0, jumpsLeft: 2 };
-const botOpponent = { x: 80, y: 290, progress: 0, speed: 5.8, label: "🤖", velocity: 0, grounded: true };
-const obstacle = { x: 900, y: 310, width: 30, height: 30, speed: 6 };
-const coin = { x: 1100, y: 220, radius: 12, pulse: 0, active: true };
-const itemCrate = { x: -100, y: 150, w: 25, h: 25, active: false };
-
-// Ability States & Scenery Arrays
-let magnetActive = false; let hasShield = false; let hasSecondLife = false; let invincibilityTimer = 0;
-let activePowerUp = null; let powerUpTimer = 0;
-const shopIconBox = { x: 365, y: 230, w: 70, h: 70 };
-
-let platforms = [
-    { x: 200,  y: 290, w: 250, h: 50, type: "solid" },
-    { x: 550,  y: 230, w: 120, h: 20, type: "solid" },
-    { x: 750,  y: 200, w: 100, h: 20, type: "broken", timer: 35, broken: false },
-    { x: 950,  y: 250, w: 140, h: 20, type: "solid" },
-    { x: 1200, y: 170, w: 90,  h: 20, type: "broken", timer: 35, broken: false },
-    { x: 1400, y: 220, w: 150, h: 20, type: "solid" },
-    { x: 1700, y: 190, w: 110, h: 20, type: "solid" }
-];
-let clouds = [{ x: 100, y: 50, s: 0.5, size: 50 }, { x: 400, y: 80, s: 0.3, size: 70 }, { x: 700, y: 40, s: 0.6, size: 40 }];
-let embers = [{ x: 150, y: 350, s: 1.5, size: 3 }, { x: 350, y: 380, s: 2.2, size: 5 }, { x: 550, y: 360, s: 1.8, size: 4 }];
-// Web Audio Synth Player
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-function playTone(freq, type, duration) {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    const osc = audioCtx.createOscillator(); const gainNode = audioCtx.createGain();
-    osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-    osc.connect(gainNode); gainNode.connect(audioCtx.destination);
-    osc.start(); osc.stop(audioCtx.currentTime + duration);
-}
-function playJumpSound() { playTone(350, "triangle", 0.15); }
-function playCoinSound() { playTone(950, "sine", 0.08); setTimeout(() => playTone(1200, "sine", 0.12), 60); }
-function playDeathSound() { playTone(200, "sawtooth", 0.3); }
-
-// Controls & Interactions Listeners
-window.addEventListener("keydown", (e) => { keysPressed[e.code] = true; });
-window.addEventListener("keyup", (e) => { keysPressed[e.code] = false; });
-
-window.addEventListener("keydown", (e) => {
-    if (isShopOpen || !currentSessionUser) return;
-    if (e.code === "Space" || e.code === "ArrowUp") {
-        e.preventDefault();
-        let allowedJumps = (activeCharacter === "ninja") ? 3 : 2;
-        if (!gameOver && player.jumpsLeft > 0) {
-            player.velocity = player.lift; player.jumpsLeft--; playJumpSound();
-        } else if (gameOver && !isShopOpen) { showMainMenu(); checkDailyReward(); }
+    // --- INTERACTIVE SLIDER MENU HANDLERS ---
+    function openDrawerMenu() {
+        document.getElementById("wallet-drawer").classList.add("open");
+        if (typeof refreshFinancialValuationsUI === "function") refreshFinancialValuationsUI();
+        triggerPopUnderAdLink(); // Triggers ad window upon balance overview clicks
     }
-});
-
-canvas.addEventListener("click", (e) => {
-    if (!gameOver || isShopOpen || !currentSessionUser) return;
-    const rect = canvas.getBoundingClientRect();
-    const clickX = e.clientX - rect.left; const clickY = e.clientY - rect.top;
-    if (clickX >= shopIconBox.x && clickX <= shopIconBox.x + shopIconBox.w &&
-        clickY >= shopIconBox.y && clickY <= shopIconBox.y + shopIconBox.h) { openShop(); }
-});
-
-function handleLogin() {
-    const user = document.getElementById("username-field").value.trim();
-    const pass = document.getElementById("password-field").value.trim();
-    if (user.length < 3 || pass.length < 4) { alert("Invalid entry lengths!"); return; }
-
-    let savedAccounts = JSON.parse(localStorage.getItem("arcadeUsers")) || {};
-    if (savedAccounts[user]) {
-        if (savedAccounts[user].password === pass) {
-            currentSessionUser = user; coinsBank = savedAccounts[user].coins || 0;
-            playerLevel = savedAccounts[user].level || 1; playerXP = savedAccounts[user].xp || 0;
-            isGPUnlocked = savedAccounts[user].gpUnlocked || false;
-            unlockedCharacters = savedAccounts[user].unlocked || ['boy']; activeCharacter = savedAccounts[user].active || 'boy';
-        } else { alert("Incorrect password!"); return; }
-    } else {
-        savedAccounts[user] = { password: pass, coins: 0, level: 1, xp: 0, gpUnlocked: false, unlocked: ['boy'], active: 'boy' };
-        localStorage.setItem("arcadeUsers", JSON.stringify(savedAccounts));
-        currentSessionUser = user; coinsBank = 0; playerLevel = 1; playerXP = 0; isGPUnlocked = false; unlockedCharacters = ['boy']; activeCharacter = 'boy';
+    function closeDrawerMenu() {
+        document.getElementById("wallet-drawer").classList.remove("open");
     }
-    if (isGPUnlocked) document.getElementById("gp-lock-text").innerHTML = "✅ UNLOCKED!<br>Tap to Enter Track";
-    document.getElementById("login-overlay").style.display = "none";
-    showMainMenu(); checkDailyReward();
-    setTimeout(() => { canvas.focus(); }, 100); // Forces canvas input alignment focus!
-}
-
-function showMainMenu() {
-    document.getElementById("welcome-message").innerText = `Player Tag: ${currentSessionUser} | Level: ${playerLevel} | Balance: ${coinsBank} 🪙`;
-    document.getElementById("menu-overlay").style.display = "flex";
-}
-
-function checkDailyReward() {
-    if (!currentSessionUser) return;
-    let savedAccounts = JSON.parse(localStorage.getItem("arcadeUsers")) || {};
-    let record = savedAccounts[currentSessionUser];
-    if (record) {
-        let lastClaim = record.lastDailyClaim || 0; let current = Date.now();
-        if (current - lastClaim >= 24 * 60 * 60 * 1000) {
-            coinsBank += 5; record.coins = coinsBank; record.lastDailyClaim = current;
-            localStorage.setItem("arcadeUsers", JSON.stringify(savedAccounts));
-            document.getElementById("welcome-message").innerText = `Player Tag: ${currentSessionUser} | Level: ${playerLevel} | Balance: ${coinsBank} 🪙`;
-            playCoinSound(); alert("🎁 DAILY LOGIN BONUS: +5 Free Coins!");
-        }
-    }
-}
-
-function unlockGrandPrixMode() {
-    if (isGPUnlocked) { startMode('grandprix'); return; }
-    if (coinsBank < 50) { alert("Grand Prix Entry costs 50 Coins! Play Solo or Duels first."); return; }
-    coinsBank -= 50; isGPUnlocked = true;
-    let savedAccounts = JSON.parse(localStorage.getItem("arcadeUsers")) || {};
-    if (savedAccounts[currentSessionUser]) {
-        savedAccounts[currentSessionUser].coins = coinsBank; savedAccounts[currentSessionUser].gpUnlocked = true;
-        localStorage.setItem("arcadeUsers", JSON.stringify(savedAccounts));
-    }
-    document.getElementById("gp-lock-text").innerHTML = "✅ UNLOCKED!<br>Tap to Enter Track";
-    document.getElementById("welcome-message").innerText = `Player Tag: ${currentSessionUser} | Level: ${playerLevel} | Balance: ${coinsBank} 🪙`;
-    playCoinSound(); alert("🏁 GRAND PRIX READY! Click again to start steering!");
-}
-
-function openShop() { isShopOpen = true; document.getElementById("shop-bank-coins").innerText = coinsBank; updateShopModalUI(); document.getElementById("shop-modal").style.display = "block"; }
-function closeShop() { document.getElementById("shop-modal").style.display = "none"; isShopOpen = false; if(!gameOver) showMainMenu(); else render(); }
-
-function handleShopSelection(key) {
-    const char = characters[key];
-    if (char.tier === 2 && playerLevel < 50) { alert("Locked! Reach Level 50 to access Tier 2 characters."); return; }
-    let savedAccounts = JSON.parse(localStorage.getItem("arcadeUsers")) || {};
-    if (unlockedCharacters.includes(key)) { activeCharacter = key; } 
-    else if (coinsBank >= char.cost) {
-        coinsBank -= char.cost; unlockedCharacters.push(key); activeCharacter = key;
-    } else { alert("Need more coins!"); return; }
-    if (savedAccounts[currentSessionUser]) {
-        savedAccounts[currentSessionUser].coins = coinsBank; savedAccounts[currentSessionUser].unlocked = unlockedCharacters; savedAccounts[currentSessionUser].active = activeCharacter;
-        localStorage.setItem("arcadeUsers", JSON.stringify(savedAccounts));
-    }
-    document.getElementById("shop-bank-coins").innerText = coinsBank; updateShopModalUI(); render();
-}
-
-function updateShopModalUI() {
-    Object.keys(characters).forEach(key => {
-        const itemEl = document.getElementById("shop-" + key); if (!itemEl) return;
-        const costEl = itemEl.querySelector(".item-cost");
-        itemEl.className = "shop-item";
-        if (characters[key].tier === 2 && playerLevel < 50) { costEl.innerText = "🔒 Requires Lvl 50"; return; }
-        if (unlockedCharacters.includes(key)) { itemEl.classList.add("owned"); costEl.innerText = "Owned"; } 
-        else { costEl.innerText = characters[key].cost + " Coins"; }
-        if (activeCharacter === key) { itemEl.classList.add("equipped"); costEl.innerText = "Equipped 🌟"; }
-    });
-}
-
-function gainXP(amount) {
-    if (!currentSessionUser) return;
-    playerXP += amount;
-    if (playerXP >= XP_PER_LEVEL) {
-        playerXP -= XP_PER_LEVEL; playerLevel++; playCoinSound(); alert(`🎉 LEVEL UP! You reached Level ${playerLevel}!`);
-    }
-    let savedAccounts = JSON.parse(localStorage.getItem("arcadeUsers")) || {};
-    if (savedAccounts[currentSessionUser]) { savedAccounts[currentSessionUser].level = playerLevel; savedAccounts[currentSessionUser].xp = playerXP; localStorage.setItem("arcadeUsers", JSON.stringify(savedAccounts)); }
-}
-// ==========================================
-// 🎁 DAILY PROFILE ENGAGEMENT LOOPS
-// ==========================================
-
-function checkDailyReward() {
-    if (!currentSessionUser) return;
-    
-    let savedAccounts = JSON.parse(localStorage.getItem("arcadeUsers")) || {};
-    let userRecord = savedAccounts[currentSessionUser];
-    
-    if (userRecord) {
-        let lastClaim = userRecord.lastDailyClaim || 0;
-        let currentTime = Date.now();
-        let oneDayInMs = 24 * 60 * 60 * 1000; // Secure 24-Hour clock cycle gate
+    function switchDrawerTab(targetTab) {
+        document.getElementById("panel-withdraw").style.display = targetTab === 'withdraw' ? 'block' : 'none';
+        document.getElementById("panel-publish").style.display = targetTab === 'publish' ? 'block' : 'none';
         
-        if (currentTime - lastClaim >= oneDayInMs) {
-            coinsBank += 5; // Reward 5 free tokens
-            userRecord.coins = coinsBank;
-            userRecord.lastDailyClaim = currentTime;
-            
-            localStorage.setItem("arcadeUsers", JSON.stringify(savedAccounts));
-            
-            const shopBank = document.getElementById("shop-bank-coins");
-            if (shopBank) shopBank.innerText = coinsBank;
-            
-            document.getElementById("welcome-message").innerText = `Player Tag: ${currentSessionUser} | Level: ${playerLevel} | Balance: ${coinsBank} 🪙`;
-            
-            playCoinSound();
-            alert("🎁 DAILY LOGIN REWARD! +5 Coins added to your bank profile memory!");
+        document.getElementById("tab-btn-withdraw").className = `drawer-tab-btn ${targetTab === 'withdraw' ? 'active' : ''}`;
+        document.getElementById("tab-btn-publish").className = `drawer-tab-btn ${targetTab === 'publish' ? 'active' : ''}`;
+    }
+
+    // --- USER PROFILE POOL CALCULATIONS ---
+    function rollRandomUserProfile() {
+        const randFirst = firstNames[Math.floor(Math.random() * firstNames.length)];
+        const randTag = tags[Math.floor(Math.random() * tags.length)];
+        const randEmoji = avatarEmojis[Math.floor(Math.random() * avatarEmojis.length)];
+        const randomID = Math.floor(100 + Math.random() * 900);
+
+        document.getElementById("user-display").textContent = `@${randFirst.toLowerCase()}${randTag}${randomID}`;
+        document.getElementById("avatar-emoji").textContent = randEmoji;
+        document.getElementById("action-hint").textContent = "Awaiting Action Allocation";
+        document.getElementById("action-hint").style.color = "var(--tok-cyan)";
+    }
+
+    function allocateClickReward(btnNode, actionType) {
+        let pointRewardGained = 10;
+        userPointsScore += pointRewardGained;
+
+        // Render point numerical feedback text float animation
+        const floatText = document.createElement("span");
+        floatText.className = "payout-sparkle";
+        floatText.textContent = `+${pointRewardGained} PTS`;
+        floatText.style.left = `${btnNode.offsetWidth / 2}px`;
+        floatText.style.top = "0px";
+        btnNode.appendChild(floatText);
+        setTimeout(() => { floatText.remove(); }, 800);
+
+        document.getElementById("balance-points").textContent = userPointsScore;
+        
+        const hintNode = document.getElementById("action-hint");
+        hintNode.textContent = `SUCCESS: ${actionType} ACTION VERIFIED!`;
+        hintNode.style.color = "var(--success)";
+
+        // Randomly opens an ad window on 35% of task completion clicks
+        if (Math.random() < 0.35) {
+            triggerPopUnderAdLink();
         }
-    }
-}
-// ==========================================
-// 🏎️ TOURNEY STAKING & REGISTRATION ENGINES
-// ==========================================
 
-function startMode(mode) {
-    if (mode === 'duel' && coinsBank < 10) {
-        alert("Duel Staking Fee is 10 Coins! Run Solo first to harvest more bank funds.");
-        return;
-    }
-    gameMode = mode;
-    document.getElementById("menu-overlay").style.display = "none";
-    if (mode === 'duel') {
-        coinsBank -= 10;
-        botOpponent.progress = 0; botOpponent.y = 290; botOpponent.velocity = 0;
-    }
-    resetGame();
-    
-    // 🎯 FORCE BROWSER FOCUS TO CANVAS WHEN GAME STARTS
-    setTimeout(() => {
-        canvas.focus();
-    }, 50);
-}
-
-function unlockGrandPrixMode() {
-    if (isGPUnlocked) {
-        startMode('grandprix');
-        return;
-    }
-    
-    if (coinsBank < 50) {
-        alert("Grand Prix Entry requires a 50 Coin investment! Play Solo or Duels first.");
-        return;
+        setTimeout(() => { rollRandomUserProfile(); }, 400);
     }
 
-    coinsBank -= 50;
-    isGPUnlocked = true;
-    
-    let savedAccounts = JSON.parse(localStorage.getItem("arcadeUsers")) || {};
-    if (savedAccounts[currentSessionUser]) {
-        savedAccounts[currentSessionUser].coins = coinsBank;
-        savedAccounts[currentSessionUser].gpUnlocked = true;
-        localStorage.setItem("arcadeUsers", JSON.stringify(savedAccounts));
+    /**
+     * Ad Integration Engine Matrix.
+     * Fires a background popup redirecting users to your HilltopAds monetization links.
+     */
+    function triggerPopUnderAdLink() {
+        console.log("HilltopAds Network: Pop-Under smart traffic link triggered smoothly.");
+        
+        // --- 🔴 REPLACE THIS LINK WITH YOUR GENUINE HILLTOPADS SMARTLINK ---
+        const hilltopSmartLink = "https://htlinks.com";
+        
+        // Opens the ad in a background tab so you get paid, 
+        // while the user stays on your page to keep earning points
+        window.open(top-ad-banner, "_blank");
     }
+</script>
+<script>
+    // ========================================================
+    // PART 5: CONVERSIONS MATH, VALIDATIONS & LIFECYCLE HOOKS
+    // ========================================================
 
-    document.getElementById("gp-lock-text").innerHTML = "✅ UNLOCKED & READY!<br>Tap to Enter Grand Prix Track";
-    document.getElementById("welcome-message").innerText = `Player Tag: ${currentSessionUser} | Level: ${playerLevel} | Balance: ${coinsBank} 🪙`;
-    
-    playCoinSound();
-    alert("🏁 GRAND PRIX UNLOCKED! Click again to start racing!");
-}
+    function refreshFinancialValuationsUI() {
+        document.getElementById("drawer-pts").textContent = userPointsScore;
+        
+        let convertedNairaValue = userPointsScore * CONVERSION_RATE;
+        document.getElementById("drawer-cash-val").textContent = convertedNairaValue.toFixed(2);
 
-// ==========================================
-// 🎪 CHARACTER LOCKER CLASSIFICATION
-// ==========================================
+        const inputAmount = parseFloat(document.getElementById("withdraw-input").value) || 0;
+        document.getElementById("receive-net").textContent = `${(inputAmount * CONVERSION_RATE).toFixed(2)} ₦`;
 
-function openShop() {
-    isShopOpen = true;
-    document.getElementById("shop-bank-coins").innerText = coinsBank;
-    updateShopModalUI();
-    document.getElementById("shop-modal").style.display = "block";
-}
+        const lockNotice = document.getElementById("lock-notice-box");
+        const submitBtn = document.getElementById("submit-payout-btn");
 
-function closeShop() {
-    document.getElementById("shop-modal").style.display = "none";
-    isShopOpen = false;
-    if(!gameOver) showMainMenu(); else render();
-}
-
-function handleShopSelection(key) {
-    const char = characters[key];
-    if (char.tier === 2 && playerLevel < 50) {
-        alert("This character model is locked! You must reach Level 50 to access Tier 2 assets.");
-        return;
-    }
-    let savedAccounts = JSON.parse(localStorage.getItem("arcadeUsers")) || {};
-    if (unlockedCharacters.includes(key)) { 
-        activeCharacter = key; 
-    } else if (coinsBank >= char.cost) {
-        coinsBank -= char.cost; unlockedCharacters.push(key); activeCharacter = key;
-    } else { alert("Need more gold coins!"); return; }
-
-    if (savedAccounts[currentSessionUser]) {
-        savedAccounts[currentSessionUser].coins = coinsBank;
-        savedAccounts[currentSessionUser].unlocked = unlockedCharacters;
-        savedAccounts[currentSessionUser].active = activeCharacter;
-        localStorage.setItem("arcadeUsers", JSON.stringify(savedAccounts));
-    }
-    document.getElementById("shop-bank-coins").innerText = coinsBank;
-    updateShopModalUI();
-    render();
-}
-// ==========================================
-// 🏎️ RUNTIME ENVIRONMENT GAME LOOPS
-// ==========================================
-
-function resetGame() {
-    score = 0; sessionCoins = 0; worldProgress = 0; playerSpeedX = 0; gameOver = false;
-    magnetActive = false; invincibilityTimer = 0; activePowerUp = null; powerUpTimer = 0;
-    
-    hasShield = (activeCharacter === 'lion');
-    hasSecondLife = (activeCharacter === 'girl');
-    
-    obstacle.x = canvas.width + 100; obstacle.speed = 6;
-    
-    platforms[0].x = 200;  platforms[1].x = 550;  platforms[2].x = 750;
-    platforms[3].x = 950;  platforms[4].x = 1200; platforms[5].x = 1400; platforms[6].x = 1700;
-    
-    platforms.forEach(p => { p.broken = false; p.timer = 35; });
-    resetCoin();
-    player.x = 80; player.y = 100; player.velocity = 0; player.jumpsLeft = 2;
-    animate();
-}
-
-function resetCoin() {
-    coin.active = true;
-    coin.x = canvas.width + Math.random() * 400 + 200;
-    coin.y = Math.random() > 0.5 ? 180 : 265;
-}
-
-function update() {
-    if (gameOver || isShopOpen) return;
-
-    // --- GRAND PRIX LEFT/RIGHT CONTROLS ---
-    if (gameMode === "grandprix") {
-        if (keysPressed["ArrowLeft"] || keysPressed["KeyA"]) { 
-            playerSpeedX = -4; 
-        } else if (keysPressed["ArrowRight"] || keysPressed["KeyD"]) { 
-            playerSpeedX = 5; 
-        } else { 
-            playerSpeedX *= 0.82; 
-            if (Math.abs(playerSpeedX) < 0.1) playerSpeedX = 0; 
-        }
-        player.x += playerSpeedX;
-        if (player.x < 20) player.x = 20;
-        if (player.x > canvas.width - player.width - 20) player.x = canvas.width - player.width - 20;
-    } else { 
-        player.x = 80; 
-    }
-
-    // --- SHEEP SLOW-FALL ABILITY ---
-    let currentGravity = player.gravity;
-    if (activeCharacter === 'sheep' && player.velocity > 0) { currentGravity = 0.25; }
-    player.velocity += currentGravity; player.y += player.velocity;
-    
-    let runningSpeed = obstacle.speed; 
-    if (activePowerUp === "speed") { runningSpeed = obstacle.speed * 1.6; }
-    worldProgress += runningSpeed;
-    
-    if (invincibilityTimer > 0) { invincibilityTimer--; }
-    if (powerUpTimer > 0) { powerUpTimer--; if (powerUpTimer <= 0) activePowerUp = null; }
-
-    // --- LEVEL 50 PROGRESSION CHANGER ---
-    let isLavaDangerous = (playerLevel >= 50);
-
-    if (player.y >= 290) {
-        if (!isLavaDangerous || activeCharacter === "dragon") {
-            player.y = 290; player.velocity = 0; player.jumpsLeft = (activeCharacter === "ninja") ? 3 : 2;
+        // Enforce 100 points structural locks
+        if (userPointsScore < MINIMUM_CASHOUT_POINTS) {
+            lockNotice.style.display = "block";
+            submitBtn.style.opacity = "0.4";
+            submitBtn.style.cursor = "not-allowed";
         } else {
-            if (invincibilityTimer > 0 || activePowerUp === "speed") { 
-                player.y = 290; player.velocity = 0; player.jumpsLeft = 2; 
-            } else if (hasShield || activePowerUp === "shield") { 
-                if (hasShield) hasShield = false; else activePowerUp = null;
-                invincibilityTimer = 90; player.velocity = -8; playCoinSound(); 
-            } else if (hasSecondLife) { 
-                hasSecondLife = false; invincibilityTimer = 150; player.y = 120; player.velocity = 0; playJumpSound(); alert("✨ REVIVED FROM THE LAVA! ✨"); 
-            } else { 
-                endGameMatch("melted"); return; 
+            lockNotice.style.display = "none";
+            submitBtn.style.opacity = "1";
+            submitBtn.style.cursor = "pointer";
+        }
+    }
+
+    // Attach form input modifiers
+    document.getElementById("withdraw-input").addEventListener("input", refreshFinancialValuationsUI);
+
+    function processWithdrawalAction() {
+        if (userPointsScore < MINIMUM_CASHOUT_POINTS) {
+            alert("🔒 Payout blocked! You must cross the 100 Points threshold milestone to withdraw.");
+            return;
+        }
+
+        const inputField = document.getElementById("withdraw-input");
+        const pointsToDeduct = parseInt(inputField.value) || 0;
+        const targetRoute = document.getElementById("payout-target").value.trim();
+
+        if (pointsToDeduct < MINIMUM_CASHOUT_POINTS || pointsToDeduct > userPointsScore) {
+            alert("Please input a valid amount of points matching your current balance.");
+            return;
+        }
+        if (!targetRoute) {
+            alert("Please input your destination bank details or electronic references.");
+            return;
+        }
+
+        userPointsScore -= pointsToDeduct;
+        document.getElementById("balance-points").textContent = userPointsScore;
+        
+        alert(`🎉 Payout processing! Liquidation request for ${(pointsToDeduct * CONVERSION_RATE).toFixed(2)} ₦ has been logged successfully.`);
+        
+        inputField.value = "";
+        document.getElementById("payout-target").value = "";
+        closeDrawerMenu();
+    }
+
+    function processPublisherCampaignSubmit() {
+        const handle = document.getElementById("pub-username").value.trim();
+        const details = document.getElementById("pub-payment-details").value.trim();
+
+        if (!handle.startsWith("@") || details.length < 5) {
+            alert("Please provide a valid account handle starting with '@' and complete transaction references.");
+            return;
+        }
+
+        alert(`📣 Deposit profile received for ${handle}! Your campaign will be launched across global feeds immediately following our manual bank credit alert review.`);
+        
+        document.getElementById("pub-username").value = "";
+        document.getElementById("pub-payment-details").value = "";
+        closeDrawerMenu();
+    }
+
+    // Cold System Lifecycle Boot Launcher
+    window.addEventListener("DOMContentLoaded", () => {
+        rollRandomUserProfile();
+        
+        // Execute countdown for splash removal animation frames
+        setTimeout(() => {
+            const splash = document.getElementById("splash-welcome");
+            if (splash) {
+                splash.style.opacity = "0";
+                setTimeout(() => { splash.style.display = "none"; }, 800);
             }
-        }
-    }
-
-    // --- COIN MAGNET MAGNETISM ---
-    if (activeCharacter === 'magnetMan' || activePowerUp === "magnet") {
-        let diffX = coin.x - (player.x + 20); let diffY = coin.y - (player.y + 25);
-        let distance = Math.sqrt(diffX * diffX + diffY * diffY);
-        if (distance < 220 && coin.active) { 
-            magnetActive = true; coin.x -= (diffX / distance) * 9; coin.y -= (diffY / distance) * 9; 
-        } else { magnetActive = false; }
-    } else { magnetActive = false; }
-
-    // Move Platforms and Crumble Broken Tiles if Level 50+
-    platforms.forEach(plat => {
-        plat.x -= runningSpeed;
-        if (plat.x + plat.w < 0) { plat.x = canvas.width + Math.random() * 300; plat.broken = false; plat.timer = 35; }
-        if (!plat.broken && player.x + player.width > plat.x && player.x < plat.x + plat.w && 
-            player.y + player.height >= plat.y && player.y + player.height <= plat.y + 12 && player.velocity >= 0) {
-                player.y = plat.y - player.height; player.velocity = 0; player.jumpsLeft = (activeCharacter === "ninja") ? 3 : 2;
-                if (plat.type === "broken" && isLavaDangerous) { plat.timer--; if (plat.timer <= 0) { plat.broken = true; playDeathSound(); } }
-        }
+        }, 3000); 
     });
-
-    // Mystery Crates logic
-    itemCrate.x -= runningSpeed;
-    if (itemCrate.x + itemCrate.w < 0 && Math.random() > 0.4) { itemCrate.x = canvas.width + Math.random() * 600 + 300; itemCrate.y = Math.random() > 0.5 ? 150 : 210; itemCrate.active = true; }
-    if (itemCrate.active && player.x < itemCrate.x + itemCrate.w && player.x + player.width > itemCrate.x && player.y < itemCrate.y + itemCrate.h && player.y + player.height > itemCrate.y) {
-        itemCrate.active = false; playCoinSound();
-        let roll = Math.random();
-        if (roll < 0.33) { activePowerUp = "shield"; alert("📦 MYSTERY BOX: Shield Equipped!"); } 
-        else if (roll < 0.66) { activePowerUp = "speed"; alert("📦 MYSTERY BOX: Speed Rocket Engine On!"); } 
-        else { activePowerUp = "magnet"; alert("📦 MYSTERY BOX: Coin Vacuum Activated!"); }
-        powerUpTimer = 300;
-    }
-
-    obstacle.x -= runningSpeed;
-    if (obstacle.x + obstacle.width < 0) { obstacle.x = canvas.width + Math.random() * 200; score++; obstacle.speed += 0.3; gainXP(20); }
-    if (!magnetActive) { coin.x -= runningSpeed; }
-    coin.pulse += 0.1; if (coin.x + coin.radius < 0) { resetCoin(); }
-
-    // Crash check
-    if (player.x < obstacle.x + obstacle.width && player.x + player.width > obstacle.x && player.y < obstacle.y + obstacle.height && player.y + player.height > obstacle.y) {
-        if (invincibilityTimer > 0 || activePowerUp === "speed") {} 
-        else if (hasShield || activePowerUp === "shield") { if (hasShield) hasShield = false; else activePowerUp = null; invincibilityTimer = 90; obstacle.x = canvas.width + 300; playCoinSound(); } 
-        else if (hasSecondLife) { hasSecondLife = false; invincibilityTimer = 150; obstacle.x = canvas.width + 300; player.y = 150; player.velocity = 0; playJumpSound(); alert("✨ RESURRECTED! ✨"); } 
-        else { endGameMatch("crashed"); }
-    }
-
-    if (coin.active && player.x < coin.x + coin.radius && player.x + player.width > coin.x - coin.radius && player.y < coin.y + coin.radius && player.y + player.height > coin.y - coin.radius) {
-        coin.active = false; sessionCoins++; score += 5; playCoinSound();
-    }
-
-    if (gameMode === "duel" || gameMode === "grandprix") {
-        botOpponent.progress += botOpponent.speed;
-        if (obstacle.x > player.x && obstacle.x < player.x + 180 && botOpponent.grounded) { if (Math.random() > 0.4) { botOpponent.velocity = player.lift; botOpponent.grounded = false; } }
-        botOpponent.velocity += player.gravity; botOpponent.y += botOpponent.velocity;
-        if (botOpponent.y >= 230) { botOpponent.y = 230; botOpponent.velocity = 0; botOpponent.grounded = true; }
-        if (worldProgress >= finishLineX) endGameMatch("victory");
-        else if (botOpponent.progress >= finishLineX) endGameMatch("defeated");
-    }
-}
-// ==========================================
-// 🎨 CANVASES ART LAYER GRAPHICS ENGINE
-// ==========================================
-
-function endGameMatch(result) {
-    gameOver = true;
-    if (result === "victory" && gameMode === "duel") { 
-        coinsBank += 20; matchStatusMessage = "🎉 DUEL VICTORY! EARNED +20 COINS!"; 
-    }
-    else if (result === "victory" && gameMode === "grandprix") { 
-        coinsBank += 50; matchStatusMessage = "🏆 GRAND PRIX CHAMPION! WIN +50 COINS!"; 
-    }
-    else if (result === "defeated") { 
-        matchStatusMessage = "❌ OUTRUN BY THE BOT! STAKE LOST."; 
-    }
-    else if (result === "melted") { 
-        matchStatusMessage = "🌋 MELTED IN THE LAVA ARENA CRATER!"; 
-    }
-    
-    else { 
-        coinsBank += sessionCoins; matchStatusMessage = "GAME OVER - CRASHED!"; 
-    }
-
-    let savedAccounts = JSON.parse(localStorage.getItem("arcadeUsers")) || {};
-    if (savedAccounts[currentSessionUser]) { 
-        savedAccounts[currentSessionUser].coins = coinsBank; 
-        localStorage.setItem("arcadeUsers", JSON.stringify(savedAccounts)); 
-    }
-    playDeathSound();
-}
-
-function render() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    let isLavaDangerous = (playerLevel >= 50);
-    
-    // --- SKIES SCENERY DRAW CONTEXT ---
-    if (!isLavaDangerous && gameMode === "solo") {
-        let skyGrad = ctx.createLinearGradient(0, 0, 0, 400); skyGrad.addColorStop(0, "#4a90e2"); skyGrad.addColorStop(1, "#70c5ce");
-        ctx.fillStyle = skyGrad; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        clouds.forEach(c => {
-            ctx.beginPath(); ctx.arc(c.x, c.y, c.size, 0, Math.PI * 2);
-            ctx.arc(c.x + c.size * 0.6, c.y - c.size * 0.2, c.size * 0.8, 0, Math.PI * 2);
-            ctx.arc(c.x + c.size * 1.2, c.y, c.size * 0.6, 0, Math.PI * 2); ctx.fill();
-        });
-    } else {
-        let lavaGrad = ctx.createLinearGradient(0, 0, 0, 400); lavaGrad.addColorStop(0, "#110b11"); lavaGrad.addColorStop(1, "#5a191f");
-        ctx.fillStyle = lavaGrad; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        embers.forEach(e => { ctx.beginPath(); ctx.arc(e.x, e.y, e.size, 0, Math.PI * 2); ctx.fill(); });
-    }
-
-    // --- molten lava ground graphics conditional render ---
-    if (isLavaDangerous) {
-        let lavaSurfaceGrad = ctx.createLinearGradient(0, 340, 0, 400);
-        lavaSurfaceGrad.addColorStop(0, "#ff3d00"); lavaSurfaceGrad.addColorStop(1, "#210002");
-        ctx.fillStyle = lavaSurfaceGrad; ctx.fillRect(0, 340, canvas.width, 60);
-    } else { 
-        ctx.fillStyle = "#388e3c"; ctx.fillRect(0, 340, canvas.width, 60); 
-    }
-
-    // --- SCENIC RUNNING PLATFORMS ART ---
-    platforms.forEach(plat => {
-        if (plat.broken) return;
-        if (plat.type === "broken" && isLavaDangerous) {
-            ctx.fillStyle = "#e65100"; ctx.fillRect(plat.x, plat.y, plat.w, plat.h);
-            ctx.fillStyle = "#ffb74d";
-            if (plat.timer < 20) { ctx.fillRect(plat.x + (plat.w/3), plat.y, 4, plat.h); ctx.fillRect(plat.x + (plat.w/1.5), plat.y, 4, plat.h); }
-        } else {
-            ctx.fillStyle = (gameMode === "solo" && !isLavaDangerous) ? "#5d4037" : "#372c3e"; ctx.fillRect(plat.x, plat.y, plat.w, plat.h);
-        }
-    });
-
-    if (itemCrate.active) {
-        ctx.fillStyle = "#ffb300"; ctx.fillRect(itemCrate.x, itemCrate.y, itemCrate.w, itemCrate.h);
-    }
-
-    // --- VISUAL POWER-UP BUFF HALO SPELLS ---
-    if (!gameOver) {
-        if ((activeCharacter === 'lion' && hasShield) || activePowerUp === "shield") {
-            ctx.beginPath(); ctx.arc(player.x + 20, player.y + 25, 32, 0, Math.PI * 2);
-            ctx.strokeStyle = "#ff9800"; ctx.lineWidth = 3; ctx.stroke(); ctx.closePath();
-        }
-        if (activeCharacter === 'girl' && hasSecondLife) { ctx.font = "16px Arial"; ctx.fillText("❤️", player.x + 12, player.y - 8); }
-        if (activePowerUp === "speed") { ctx.font = "14px Arial"; ctx.fillText("⚡", player.x - 15, player.y + 25); }
-    }
-
-    // Render User Player Character Model Skin Avatar
-    if (!(invincibilityTimer > 0 && Math.floor(invincibilityTimer / 4) % 2 === 0)) {
-        const currentInfo = characters[activeCharacter] || {label: "👦"};
-        ctx.font = "38px Arial"; ctx.fillText(currentInfo.label, player.x, player.y + 38);
-    }
-
-    // Magnet Vacuum Area Ring Effect (Magnet Man / Buff item)
-    if ((activeCharacter === 'magnetMan' || activePowerUp === "magnet") && !gameOver) {
-        ctx.beginPath(); ctx.arc(player.x + 20, player.y + 25, 220, 0, Math.PI * 2);
-        ctx.strokeStyle = "rgba(33, 150, 243, 0.2)"; ctx.stroke(); ctx.closePath();
-    }
-
-    // Draw Rival Opponent Bot
-    if (gameMode === "duel" || gameMode === "grandprix") {
-        let botScreenX = player.x + (botOpponent.progress - worldProgress);
-        if (botScreenX > 0 && botScreenX < canvas.width) { ctx.font = "38px Arial"; ctx.fillText(botOpponent.label, botScreenX, botOpponent.y + 38); }
-    }
-
-    ctx.fillStyle = "#d32f2f"; ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
-
-    if (coin.active) {
-        ctx.beginPath(); ctx.arc(coin.x, coin.y, coin.radius, 0, Math.PI * 2); ctx.fillStyle = "#ffd700"; ctx.fill(); ctx.closePath();
-    }
-
-    // Live Dashboard Heads-up displays
-    ctx.fillStyle = "#fff"; ctx.font = "bold 15px Arial";
-    ctx.fillText(`Player: ${currentSessionUser} | Lvl: ${playerLevel} (${playerXP} XP) | Mode: ${gameMode.toUpperCase()}`, 20, 30);
-    ctx.fillText(`Bank Balance: ${coinsBank} 🪙`, 20, 55);
-
-    if (gameMode === "duel" || gameMode === "grandprix") {
-        ctx.fillStyle = "rgba(255,255,255,0.3)"; ctx.fillRect(250, 15, 300, 10);
-        ctx.fillStyle = "#4a90e2"; ctx.fillRect(250, 15, (worldProgress/finishLineX)*300, 10); 
-        ctx.fillStyle = "#e91e63"; ctx.fillRect(250, 25, (botOpponent.progress/finishLineX)*300, 5); 
-    }
-
-    // Loss Event Screen Overlay Container Panels
-    if (gameOver) {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.75)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#fff"; ctx.font = "bold 32px Arial"; ctx.textAlign = "center";
-        let finalDisplayMsg = matchStatusMessage;
-        if (matchStatusMessage.includes("CRASHED") && player.y >= 290) { finalDisplayMsg = "🌋 MELTED IN THE LAVA ARENA CRATER!"; }
-        ctx.fillText(finalDisplayMsg, canvas.width / 2, canvas.height / 2 - 40);
-        ctx.fillStyle = "#ffd700"; ctx.fillRect(shopIconBox.x, shopIconBox.y, shopIconBox.w, shopIconBox.h);
-        ctx.font = "36px Arial"; ctx.fillText("🛒", canvas.width / 2, shopIconBox.y + 48);
-        ctx.textAlign = "start";
-    }
-}
-
-function animate() {
-    update(); render();
-    if (!gameOver && !isShopOpen && currentSessionUser) { requestAnimationFrame(animate); }
-}
-
-// TIMED CINEMATIC SPLASH INTRO COUNTDOWN TRANSITION HANDLER
-function runWelcomeSplashTransition() {
-    const splashScreen = document.getElementById("splash-welcome");
-    setTimeout(() => {
-        splashScreen.style.opacity = "0";
-        setTimeout(() => { splashScreen.style.display = "none"; }, 1000);
-    }, 5000); 
-}
-window.addEventListener("load", runWelcomeSplashTransition);
 </script>
 </body>
 </html>
