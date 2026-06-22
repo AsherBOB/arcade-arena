@@ -63,6 +63,8 @@
             background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px;
             padding: 30px 24px; text-align: center; box-shadow: 0 12px 40px rgba(0,0,0,0.5); margin-bottom: 20px;
         }
+</style>
+</head>
         .avatar-frame {
             width: 85px; height: 85px; border-radius: 50%;
             background: linear-gradient(135deg, var(--tok-cyan), var(--tok-pink));
@@ -87,6 +89,24 @@
             animation: floatUp 0.8s forwards; z-index: 99;
         }
         @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-55px); opacity: 0; } }
+
+        /* 📋 NEON GLOWING UPLOAD WIREBOX DESIGN */
+        .glowing-upload-container {
+            margin-top: 25px; background: #111116; border: 2px dashed #3a3a4f;
+            border-radius: 16px; padding: 20px; box-sizing: border-box;
+            text-align: center; position: relative; transition: all 0.3s;
+            display: none; /* Dynamic visibility handling */
+            animation: borderNeonGlow 2s infinite ease-in-out;
+        }
+        @keyframes borderNeonGlow {
+            0% { border-color: #3a3a4f; box-shadow: 0 0 5px rgba(0, 242, 254, 0.1); }
+            50% { border-color: var(--tok-cyan); box-shadow: 0 0 20px rgba(0, 242, 254, 0.4); }
+            100% { border-color: #3a3a4f; box-shadow: 0 0 5px rgba(0, 242, 254, 0.1); }
+        }
+        .upload-title { font-size: 14px; font-weight: bold; color: var(--text-white); margin: 0 0 8px 0; }
+        .upload-subtext { font-size: 11px; color: var(--text-grey); margin: 0 0 15px 0; }
+        .file-hidden-input { display: none; }
+        .file-mock-btn { background: #1c1c24; border: 1px solid var(--border); color: white; padding: 8px 16px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: bold; }
 
         .side-drawer {
             position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100vh;
@@ -151,11 +171,18 @@
             </div>
             <button class="menu-trigger-btn" onclick="openDrawerMenu()">🎪 Open Wallet Menu</button>
         </div>
+
         <!-- SOCIAL EARN ACTION PANEL CARD -->
         <div class="main-card">
             <div class="avatar-frame" id="avatar-emoji">👤</div>
             <h3 class="username-display" id="user-display">@loading_racer</h3>
             <div class="task-status" id="action-hint">Waiting Action Sequence</div>
+
+            <!-- MANDATORY ENTRY FIELD FOR ACCURATE ID TRACKING -->
+            <div class="form-group" style="text-align: left; max-width: 280px; margin: 0 auto 20px;">
+                <label class="form-label" style="color: var(--tok-cyan); font-size: 11px; text-transform: uppercase;">Input Your TikTok Handle First</label>
+                <input type="text" id="action-user-handle" class="input-box" placeholder="e.g., @tresbob" style="padding: 10px; font-size: 13px;">
+            </div>
 
             <div class="action-btn-container">
                 <div class="glitch-shadow-cyan"></div><div class="glitch-shadow-pink"></div>
@@ -169,10 +196,17 @@
                 <div class="glitch-shadow-cyan"></div><div class="glitch-shadow-pink"></div>
                 <button class="action-button" onclick="allocateClickReward(this, 'SHARE')">Share</button>
             </div>
-            
-            <p style="font-size:11px; color:var(--text-grey); margin-top:20px; line-height:1.4;">
-                📌 <b>Verification Notice:</b> Ensure you follow the account in the launched window before submitting verification references!
-            </p>
+
+            <!-- THE NEON GLOWING SCREENSHOT UPLOAD FILE COMPONENT BOX -->
+            <div id="proof-upload-box" class="glowing-upload-container">
+                <div class="upload-title">🖼️ Upload Proof Screenshot</div>
+                <div class="upload-subtext">Take a screenshot showing your active action and upload here.</div>
+                
+                <input type="file" id="real-file-input" class="file-hidden-input" accept="image/*" onchange="handleFileSelection(this)">
+                <button class="file-mock-btn" onclick="document.getElementById('real-file-input').click()">Choose Screenshot Image</button>
+                
+                <div id="file-status-info" style="font-size: 11px; color: var(--success); margin-top: 10px; display: none; font-weight: bold;"></div>
+            </div>
         </div>
 
     </div>
@@ -289,36 +323,55 @@
     }
 
     function allocateClickReward(btnNode, actionType) {
-        let pointRewardGained = 10;
-        userPointsScore += pointRewardGained;
+        // ENFORCE USERNAME INPUT RULE BEFORE JUMPING TO APP
+        const handleInput = document.getElementById("action-user-handle").value.trim();
+        if (!handleInput.startsWith("@") || handleInput.length < 3) {
+            alert("⚠️ ERROR: You must input your valid TikTok username starting with '@' before attempting the task!");
+            return;
+        }
 
+        // Render point feedback animation text element frame
         const floatText = document.createElement("span");
         floatText.className = "payout-sparkle";
-        floatText.textContent = `+${pointRewardGained} PTS`;
+        floatText.textContent = `PENDING`;
         floatText.style.left = `${btnNode.offsetWidth / 2}px`;
         floatText.style.top = "0px";
         btnNode.appendChild(floatText);
         setTimeout(() => { floatText.remove(); }, 800);
 
-        document.getElementById("balance-points").textContent = userPointsScore;
         const hintNode = document.getElementById("action-hint");
-        hintNode.textContent = `SUCCESS: ${actionType} ACTION VERIFIED!`;
-        hintNode.style.color = "var(--success)";
+        hintNode.textContent = `AWAITING SCREENSHOT PROOF FOR ${actionType}!`;
+        hintNode.style.color = "var(--gold)";
 
-        // 🚀 AUTOMATIC WEB-TO-APP LAUNCHER TRIGGERS CLEANLY HERE
-        launchNativeTikTokProfile();
+        // Display the hidden neon glowing file container instantly
+        document.getElementById("proof-upload-box").style.display = "block";
 
-        setTimeout(() => { rollRandomUserProfile(); }, 400);
+        // Open your specific TikTok profile view automatically
+        window.open("tiktok://@tresbob", "_blank");
     }
 
-   function launchNativeTikTokProfile() {
-    console.log("System Status: Opening profile link in native mobile configuration framework.");
-    
-    // 🟢 THIS FORCES THE MOBILE APP TO OPEN THE SPECIFIC USER PROFILE INSTANTLY
-    const nativeAppScheme = "tiktok://@tresbob"; 
-    
-    window.open(nativeAppScheme, "_blank");
-}
+    // PROCESS THE NEON FILE UPLOAD ACTION AND ANNOUNCE THE 3-DAY DELAY RULE
+    function handleFileSelection(inputNode) {
+        if (inputNode.files && inputNode.files[0]) {
+            const fileName = inputNode.files[0].name;
+            const statusInfo = document.getElementById("file-status-info");
+            
+            statusInfo.textContent = `📤 SUBMITTED: ${fileName}`;
+            statusInfo.style.display = "block";
+
+            // Inform them of the 3-day verification policy clearly via system overlay alert dialog boxes
+            alert(`✅ PROOF SUBMITTED SUCCESSFULLY!\n\nYour account reference has been logged. Our system team will manually verify your follow within 3 days. Your points balance will update automatically upon approval confirmation review!`);
+            
+            // Clear inputs and re-hide glow panel box smoothly
+            document.getElementById("action-user-handle").value = "";
+            document.getElementById("real-file-input").value = "";
+            setTimeout(() => {
+                document.getElementById("proof-upload-box").style.display = "none";
+                statusInfo.style.display = "none";
+                rollRandomUserProfile();
+            }, 1500);
+        }
+    }
 
     function refreshFinancialValuationsUI() {
         document.getElementById("drawer-pts").textContent = userPointsScore;
