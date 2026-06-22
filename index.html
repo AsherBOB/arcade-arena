@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TokMatrix - Publisher Exchange & Ads Portal</title>
+    
+    <!-- 🟢 HILLTOPADS ACTIVE VERIFICATION CORE METATAG -->
+    <meta name="ad34f2c91f1f46ca57e19677b6d4813d713cf29d" content="ad34f2c91f1f46ca57e19677b6d4813d713cf29d" />
+
     <style>
         :root {
             --bg-dark: #010101;
@@ -21,105 +25,52 @@
         }
 
         body {
-            margin: 0;
-            background: var(--bg-dark);
-            color: var(--text-white);
+            margin: 0; background: var(--bg-dark); color: var(--text-white);
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
-            padding: 20px;
-            box-sizing: border-box;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; overflow-x: hidden; padding: 20px; box-sizing: border-box;
         }
 
-        /* 🎬 ANIMATED INTRO SPLASH OVERLAY */
         #splash-welcome {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #000000;
-            z-index: 99999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000000; z-index: 99999; display: flex;
+            flex-direction: column; justify-content: center; align-items: center;
             transition: opacity 0.8s ease-in-out;
         }
-        .splash-logo {
-            font-size: 70px;
-            animation: pulseGlow 1.5s infinite ease-in-out;
-        }
+        .splash-logo { font-size: 70px; animation: pulseGlow 1.5s infinite ease-in-out; }
         @keyframes pulseGlow {
             0% { transform: scale(0.95); filter: drop-shadow(0 0 10px var(--tok-cyan)); }
             50% { transform: scale(1.05); filter: drop-shadow(0 0 25px var(--tok-pink)); }
             100% { transform: scale(0.95); filter: drop-shadow(0 0 10px var(--tok-cyan)); }
         }
 
-        /* App Layout Container Setup */
-        .app-container {
-            width: 100%;
-            max-width: 440px;
-            position: relative;
-        }
+        .app-container { width: 100%; max-width: 440px; position: relative; }
 
-        /* 📺 ADVERTISING SLOT LAYOUT WIRES */
         .ad-slot-wrapper {
-            width: 100%;
-            background: #111116;
-            border: 1px dashed #3a3a4f;
-            border-radius: 12px;
-            padding: 12px;
-            box-sizing: border-box;
-            text-align: center;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 100%; background: #111116; border: 1px dashed #3a3a4f;
+            border-radius: 12px; padding: 12px; box-sizing: border-box;
+            text-align: center; margin-bottom: 20px; position: relative;
+            overflow: hidden; display: flex; justify-content: center; align-items: center;
         }
         .ad-label-tag {
-            position: absolute;
-            top: 0; left: 0;
-            background: #2a2a35;
-            color: var(--text-grey);
-            font-size: 9px;
-            padding: 2px 6px;
-            text-transform: uppercase;
-            font-weight: bold;
-            border-bottom-right-radius: 6px;
-            z-index: 10;
+            position: absolute; top: 0; left: 0; background: #2a2a35;
+            color: var(--text-grey); font-size: 9px; padding: 2px 6px;
+            text-transform: uppercase; font-weight: bold; border-bottom-right-radius: 6px; z-index: 10;
         }
         .ad-placeholder-content {
-            min-height: 60px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #5a5a75;
-            font-size: 12px;
-            font-weight: bold;
-            letter-spacing: 1px;
+            min-height: 250px; display: flex; justify-content: center;
+            align-items: center; color: #5a5a75; font-size: 12px;
+            font-weight: bold; letter-spacing: 1px; width: 100%;
         }
 
         .hud-panel {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 15px 20px; display: flex;
+            justify-content: space-between; align-items: center; margin-bottom: 25px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.4);
         }
-
-        .balance-box h2 {
-            margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-grey);
-        }
-        .balance-amount {
-            font-size: 26px; font-weight: 800; color: var(--gold); margin-top: 2px;
-        }
+        .balance-box h2 { margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-grey); }
+        .balance-amount { font-size: 26px; font-weight: 800; color: var(--gold); margin-top: 2px; }
 
         .menu-trigger-btn {
             background: #1c1c24; border: 1px solid var(--border); color: white;
@@ -130,10 +81,8 @@
 
         .main-card {
             background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px;
-            padding: 30px 24px; text-align: center; box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-            margin-bottom: 20px;
+            padding: 30px 24px; text-align: center; box-shadow: 0 12px 40px rgba(0,0,0,0.5); margin-bottom: 20px;
         }
-
         .avatar-frame {
             width: 85px; height: 85px; border-radius: 50%;
             background: linear-gradient(135deg, var(--tok-cyan), var(--tok-pink));
@@ -159,7 +108,6 @@
         }
         @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-55px); opacity: 0; } }
 
-        /* 📋 SIDE DRAWER SYSTEM SLIDER OVERLAY */
         .side-drawer {
             position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100vh;
             background: #09090d; border-left: 1px solid var(--border); z-index: 10000;
@@ -175,15 +123,7 @@
         .drawer-tab-btn.active { color: var(--tok-cyan); border-bottom: 2px solid var(--tok-cyan); }
 
         .form-group { margin-bottom: 18px; }
-        
-        /* ℹ️ HELPER TOOLTIP STYLES */
-        .label-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 6px;
-            position: relative;
-        }
+        .label-wrapper { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; position: relative; }
         .form-label { font-size: 13px; font-weight: 600; color: var(--text-grey); margin: 0; }
         
         .info-icon {
@@ -209,6 +149,7 @@
         .sub-row.total { border-top: 1px dashed var(--border); padding-top: 8px; font-weight: bold; }
 
         .locked-notice { background: rgba(220,38,38,0.1); border: 1px solid var(--error); padding: 12px; border-radius: 8px; color: #ff6b6b; font-size: 12px; text-align: center; margin-bottom: 15px; display: none; }
+        .btn-withdraw { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; font-weight: bold; border-radius: 12px; cursor: pointer; text-transform: uppercase; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -221,12 +162,17 @@
     </div>
     
     <div class="app-container">
-    <meta name="ad34f2c91f1f46ca57e19677b6d4813d713cf29d" content="ad34f2c91f1f46ca57e19677b6d4813d713cf29d" />
-<div class="ad-matrix">
-    <div class="ad-frame-container" style="min-height: 250px; display: flex; justify-content: center; align-items: center;">   
-    </div>
-</div>
 
+        <!-- UPPER AD SLOT ZONE WITH ENFORCED AUTH VERIFICATION CODES -->
+        <div class="ad-slot-wrapper">
+            <div class="ad-label-tag">Advertisement</div>
+            <div class="ad-placeholder-content">
+                
+                <!-- 🟢 METATAG EMBEDDED INSIDE WINDOW DOM TARGET -->
+                <meta name="ad34f2c91f1f46ca57e19677b6d4813d713cf29d" content="ad34f2c91f1f46ca57e19677b6d4813d713cf29d" />
+                
+            </div>
+        </div>
 
         <!-- HEADER HUD MATRIX -->
         <div class="hud-panel">
@@ -236,7 +182,6 @@
             </div>
             <button class="menu-trigger-btn" onclick="openDrawerMenu()">🎪 Open Wallet Menu</button>
         </div>
-
         <!-- SOCIAL EARN ACTION PANEL CARD -->
         <div class="main-card">
             <div class="avatar-frame" id="avatar-emoji">👤</div>
@@ -257,13 +202,16 @@
             </div>
         </div>
 
-       <!-- Locate the second PENDING LIVE AD FRAME near your operations command blocks -->
-<div class="ad-matrix">
-    <div class="ad-frame-container" style="min-height: 250px; display: flex; justify-content: center; align-items: center;">
-        <meta name="ad34f2c91f1f46ca57e19677b6d4813d713cf29d" content="ad34f2c91f1f46ca57e19677b6d4813d713cf29d" />
-    </div>
-</div>
-
+        <!-- LOWER AD SLOT ZONE WITH ENFORCED AUTH VERIFICATION CODES -->
+        <div class="ad-slot-wrapper">
+            <div class="ad-label-tag">Advertisement</div>
+            <div class="ad-placeholder-content">
+                
+                <!-- 🟢 METATAG EMBEDDED INSIDE WINDOW DOM TARGET -->
+                <meta name="ad34f2c91f1f46ca57e19677b6d4813d713cf29d" content="ad34f2c91f1f46ca57e19677b6d4813d713cf29d" />
+                
+            </div>
+        </div>
 
     </div>
     <!-- 📋 SIDE SLIDER DRAWER CONTAINER OVERLAY -->
@@ -300,7 +248,6 @@
             <div class="form-group">
                 <div class="label-wrapper">
                     <label class="form-label">Destination Payout Account</label>
-                    <!-- ℹ️ Info Icon for Withdrawal Destination -->
                     <div class="info-icon">i
                         <span class="tooltip-text">Input your precise bank code records (e.g., GTBank, 0123456789). Ensure account name details match perfectly to prevent validation hold delays.</span>
                     </div>
@@ -324,45 +271,19 @@
                 <div class="label-wrapper">
                     <label class="form-label">Target Social Account Handle</label>
                 </div>
-                <input type="text" id="pub-username" class="input-box" placeholder="e.g., @creators_hub">
-            </div>
-
-            <div class="form-group">
-                <div class="label-wrapper">
-                    <label class="form-label">Sender Identity & Payment Details</label>
-                    
-                    <div class="info-icon">i
-                        <span class="tooltip-text">Enter the exact name listed on the banking app transaction receipt. This helps us match your transfer quickly so your campaign can be activated instantly.</span>
-                    </div>
-                </div>
-                <input type="text" id="pub-payment-details" class="input-box" placeholder="Your Name & Bank transfer info">
-            </div>
-
-            <div class="sub-box" style="border-color:var(--tok-cyan);">
-                <div style="font-weight:bold; color:var(--tok-cyan); margin-bottom:4px;">🏦 Bank Deposit Pipeline Instructions</div>
-                Transfer exactly <b>5,000 ₦</b> to Account: <b>1234567890</b> (Apex Bank). Input the confirmation parameters above to launch traffic tracking.
-            </div>
-
-            <button class="btn-withdraw" style="background-color:var(--success);" onclick="processPublisherCampaignSubmit()">Submit Deposit Registry</button>
-        </div>
-    </div>
-<script>
-    // ========================================================
-    // PART 4: SYSTEM RUNTIME VARIABLES & REWARD GENERATORS
-    // ========================================================
+                <input<script>
     let userPointsScore = 0; 
-    const CONVERSION_RATE = 0.50; // 1 Point yields exactly 0.50 NGN
+    const CONVERSION_RATE = 0.50;
     const MINIMUM_CASHOUT_POINTS = 100;
 
     const firstNames = ["Asher", "Bob", "Chidi", "Tunde", "Amaka", "Zainab", "Funmi", "David", "Ngozi", "Emeka"];
     const tags = ["_vibe", "racer", "001", ".dx", "hq"];
     const avatarEmojis = ["🤠", "🥷", "🦖", "👽", "🤖", "🚀", "⭐"];
 
-    // --- INTERACTIVE SLIDER MENU HANDLERS ---
     function openDrawerMenu() {
         document.getElementById("wallet-drawer").classList.add("open");
-        if (typeof refreshFinancialValuationsUI === "function") refreshFinancialValuationsUI();
-        triggerPopUnderAdLink(); // Triggers ad window upon balance overview clicks
+        refreshFinancialValuationsUI();
+        triggerPopUnderAdLink();
     }
     function closeDrawerMenu() {
         document.getElementById("wallet-drawer").classList.remove("open");
@@ -370,18 +291,15 @@
     function switchDrawerTab(targetTab) {
         document.getElementById("panel-withdraw").style.display = targetTab === 'withdraw' ? 'block' : 'none';
         document.getElementById("panel-publish").style.display = targetTab === 'publish' ? 'block' : 'none';
-        
         document.getElementById("tab-btn-withdraw").className = `drawer-tab-btn ${targetTab === 'withdraw' ? 'active' : ''}`;
         document.getElementById("tab-btn-publish").className = `drawer-tab-btn ${targetTab === 'publish' ? 'active' : ''}`;
     }
 
-    // --- USER PROFILE POOL CALCULATIONS ---
     function rollRandomUserProfile() {
         const randFirst = firstNames[Math.floor(Math.random() * firstNames.length)];
         const randTag = tags[Math.floor(Math.random() * tags.length)];
         const randEmoji = avatarEmojis[Math.floor(Math.random() * avatarEmojis.length)];
         const randomID = Math.floor(100 + Math.random() * 900);
-
         document.getElementById("user-display").textContent = `@${randFirst.toLowerCase()}${randTag}${randomID}`;
         document.getElementById("avatar-emoji").textContent = randEmoji;
         document.getElementById("action-hint").textContent = "Awaiting Action Allocation";
@@ -392,7 +310,6 @@
         let pointRewardGained = 10;
         userPointsScore += pointRewardGained;
 
-        // Render point numerical feedback text float animation
         const floatText = document.createElement("span");
         floatText.className = "payout-sparkle";
         floatText.textContent = `+${pointRewardGained} PTS`;
@@ -402,42 +319,24 @@
         setTimeout(() => { floatText.remove(); }, 800);
 
         document.getElementById("balance-points").textContent = userPointsScore;
-        
         const hintNode = document.getElementById("action-hint");
         hintNode.textContent = `SUCCESS: ${actionType} ACTION VERIFIED!`;
         hintNode.style.color = "var(--success)";
 
-        // Randomly opens an ad window on 35% of task completion clicks
         if (Math.random() < 0.35) {
             triggerPopUnderAdLink();
         }
-
         setTimeout(() => { rollRandomUserProfile(); }, 400);
     }
 
-    /**
-     * Ad Integration Engine Matrix.
-     * Fires a background popup redirecting users to your HilltopAds monetization links.
-     */
     function triggerPopUnderAdLink() {
         console.log("HilltopAds Network: Pop-Under smart traffic link triggered smoothly.");
-        
-        // --- 🔴 REPLACE THIS LINK WITH YOUR GENUINE HILLTOPADS SMARTLINK ---
-        const hilltopSmartLink = "https://htlinks.com";
-        
-        // Opens the ad in a background tab so you get paid, 
-        // while the user stays on your page to keep earning points
-        window.open(top-ad-banner, "_blank");
+        const hilltopSmartLink = "https://htlinks.com"; 
+        window.open(hilltopSmartLink, "_blank");
     }
-</script>
-<script>
-    // ========================================================
-    // PART 5: CONVERSIONS MATH, VALIDATIONS & LIFECYCLE HOOKS
-    // ========================================================
 
     function refreshFinancialValuationsUI() {
         document.getElementById("drawer-pts").textContent = userPointsScore;
-        
         let convertedNairaValue = userPointsScore * CONVERSION_RATE;
         document.getElementById("drawer-cash-val").textContent = convertedNairaValue.toFixed(2);
 
@@ -447,7 +346,6 @@
         const lockNotice = document.getElementById("lock-notice-box");
         const submitBtn = document.getElementById("submit-payout-btn");
 
-        // Enforce 100 points structural locks
         if (userPointsScore < MINIMUM_CASHOUT_POINTS) {
             lockNotice.style.display = "block";
             submitBtn.style.opacity = "0.4";
@@ -459,7 +357,6 @@
         }
     }
 
-    // Attach form input modifiers
     document.getElementById("withdraw-input").addEventListener("input", refreshFinancialValuationsUI);
 
     function processWithdrawalAction() {
@@ -467,7 +364,6 @@
             alert("🔒 Payout blocked! You must cross the 100 Points threshold milestone to withdraw.");
             return;
         }
-
         const inputField = document.getElementById("withdraw-input");
         const pointsToDeduct = parseInt(inputField.value) || 0;
         const targetRoute = document.getElementById("payout-target").value.trim();
@@ -477,15 +373,13 @@
             return;
         }
         if (!targetRoute) {
-            alert("Please input your destination bank details or electronic references.");
+            alert("Please input your destination bank details.");
             return;
         }
 
         userPointsScore -= pointsToDeduct;
         document.getElementById("balance-points").textContent = userPointsScore;
-        
-        alert(`🎉 Payout processing! Liquidation request for ${(pointsToDeduct * CONVERSION_RATE).toFixed(2)} ₦ has been logged successfully.`);
-        
+        alert(`🎉 Payout processing! Liquidation request for ${(pointsToDeduct * CONVERSION_RATE).toFixed(2)} ₦ has been logged.`);
         inputField.value = "";
         document.getElementById("payout-target").value = "";
         closeDrawerMenu();
@@ -494,24 +388,18 @@
     function processPublisherCampaignSubmit() {
         const handle = document.getElementById("pub-username").value.trim();
         const details = document.getElementById("pub-payment-details").value.trim();
-
         if (!handle.startsWith("@") || details.length < 5) {
-            alert("Please provide a valid account handle starting with '@' and complete transaction references.");
+            alert("Please provide a valid account handle starting with '@'.");
             return;
         }
-
-        alert(`📣 Deposit profile received for ${handle}! Your campaign will be launched across global feeds immediately following our manual bank credit alert review.`);
-        
+        alert(`📣 Deposit profile received for ${handle}! Campaign launcher active pending alert review.`);
         document.getElementById("pub-username").value = "";
         document.getElementById("pub-payment-details").value = "";
         closeDrawerMenu();
     }
 
-    // Cold System Lifecycle Boot Launcher
     window.addEventListener("DOMContentLoaded", () => {
         rollRandomUserProfile();
-        
-        // Execute countdown for splash removal animation frames
         setTimeout(() => {
             const splash = document.getElementById("splash-welcome");
             if (splash) {
@@ -523,3 +411,4 @@
 </script>
 </body>
 </html>
+
