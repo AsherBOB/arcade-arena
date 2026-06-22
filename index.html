@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TokMatrix - Publisher Exchange & Ads Portal</title>
     
-    <!-- 🟢 HILLTOPADS ACTIVE VERIFICATION CORE METATAG -->
-    <meta name="ad34f2c91f1f46ca57e19677b6d4813d713cf29d" content="ad34f2c91f1f46ca57e19677b6d4813d713cf29d" />
-
     <style>
         :root {
             --bg-dark: #010101;
@@ -45,23 +42,6 @@
         }
 
         .app-container { width: 100%; max-width: 440px; position: relative; }
-
-        .ad-slot-wrapper {
-            width: 100%; background: #111116; border: 1px dashed #3a3a4f;
-            border-radius: 12px; padding: 12px; box-sizing: border-box;
-            text-align: center; margin-bottom: 20px; position: relative;
-            overflow: hidden; display: flex; justify-content: center; align-items: center;
-        }
-        .ad-label-tag {
-            position: absolute; top: 0; left: 0; background: #2a2a35;
-            color: var(--text-grey); font-size: 9px; padding: 2px 6px;
-            text-transform: uppercase; font-weight: bold; border-bottom-right-radius: 6px; z-index: 10;
-        }
-        .ad-placeholder-content {
-            min-height: 250px; display: flex; justify-content: center;
-            align-items: center; color: #5a5a75; font-size: 12px;
-            font-weight: bold; letter-spacing: 1px; width: 100%;
-        }
 
         .hud-panel {
             background: var(--bg-card); border: 1px solid var(--border);
@@ -163,17 +143,6 @@
     
     <div class="app-container">
 
-        <!-- UPPER AD SLOT ZONE WITH ENFORCED AUTH VERIFICATION CODES -->
-        <div class="ad-slot-wrapper">
-            <div class="ad-label-tag">Advertisement</div>
-            <div class="ad-placeholder-content">
-                
-                <!-- 🟢 METATAG EMBEDDED INSIDE WINDOW DOM TARGET -->
-                <meta name="ad34f2c91f1f46ca57e19677b6d4813d713cf29d" content="ad34f2c91f1f46ca57e19677b6d4813d713cf29d" />
-                
-            </div>
-        </div>
-
         <!-- HEADER HUD MATRIX -->
         <div class="hud-panel">
             <div class="balance-box">
@@ -200,17 +169,10 @@
                 <div class="glitch-shadow-cyan"></div><div class="glitch-shadow-pink"></div>
                 <button class="action-button" onclick="allocateClickReward(this, 'SHARE')">Share</button>
             </div>
-        </div>
-
-        <!-- LOWER AD SLOT ZONE WITH ENFORCED AUTH VERIFICATION CODES -->
-        <div class="ad-slot-wrapper">
-            <div class="ad-label-tag">Advertisement</div>
-            <div class="ad-placeholder-content">
-                
-                <!-- 🟢 METATAG EMBEDDED INSIDE WINDOW DOM TARGET -->
-                <meta name="ad34f2c91f1f46ca57e19677b6d4813d713cf29d" content="ad34f2c91f1f46ca57e19677b6d4813d713cf29d" />
-                
-            </div>
+            
+            <p style="font-size:11px; color:var(--text-grey); margin-top:20px; line-height:1.4;">
+                📌 <b>Verification Notice:</b> Ensure you follow the account in the launched window before submitting verification references!
+            </p>
         </div>
 
     </div>
@@ -265,13 +227,34 @@
 
         <!-- MODULE B: PUBLISHER DEPOSIT ADVERTISER CAMPAIGN PANEL -->
         <div id="panel-publish" style="display:none;">
-            <p style="font-size:12px; color:var(--text-grey); margin-top:0;">Submit your account handle configurations. Ads go live across active dashboards immediately upon bank transfer alert confirmation reviews.</p>
+            <p style="font-size:12px; color:var(--text-grey); margin-top:0;">Submit your account handle configurations. Tasks go live across active dashboards immediately upon bank transfer alert confirmation reviews.</p>
             
             <div class="form-group">
                 <div class="label-wrapper">
                     <label class="form-label">Target Social Account Handle</label>
                 </div>
-                <input<script>
+                <input type="text" id="pub-username" class="input-box" placeholder="e.g., @creators_hub">
+            </div>
+
+            <div class="form-group">
+                <div class="label-wrapper">
+                    <label class="form-label">Sender Identity & Payment Details</label>
+                    <div class="info-icon">i
+                        <span class="tooltip-text">Enter the exact name listed on the banking app transaction receipt. This helps us match your transfer quickly so your campaign can be activated instantly.</span>
+                    </div>
+                </div>
+                <input type="text" id="pub-payment-details" class="input-box" placeholder="Your Name & Bank transfer info">
+            </div>
+
+            <div class="sub-box" style="border-color:var(--tok-cyan);">
+                <div style="font-weight:bold; color:var(--tok-cyan); margin-bottom:4px;">🏦 Bank Deposit Pipeline Instructions</div>
+                Transfer exactly <b>5,000 ₦</b> to Account: <b>1234567890</b> (Apex Bank). Input the confirmation parameters above to launch traffic tracking.
+            </div>
+
+            <button class="btn-withdraw" style="background-color:var(--success);" onclick="processPublisherCampaignSubmit()">Submit Deposit Registry</button>
+        </div>
+    </div>
+<script>
     let userPointsScore = 0; 
     const CONVERSION_RATE = 0.50;
     const MINIMUM_CASHOUT_POINTS = 100;
@@ -283,7 +266,6 @@
     function openDrawerMenu() {
         document.getElementById("wallet-drawer").classList.add("open");
         refreshFinancialValuationsUI();
-        triggerPopUnderAdLink();
     }
     function closeDrawerMenu() {
         document.getElementById("wallet-drawer").classList.remove("open");
@@ -323,16 +305,16 @@
         hintNode.textContent = `SUCCESS: ${actionType} ACTION VERIFIED!`;
         hintNode.style.color = "var(--success)";
 
-        if (Math.random() < 0.35) {
-            triggerPopUnderAdLink();
-        }
+        // 🚀 AUTOMATIC WEB-TO-APP LAUNCHER TRIGGERS CLEANLY HERE
+        launchNativeTikTokProfile();
+
         setTimeout(() => { rollRandomUserProfile(); }, 400);
     }
 
-    function triggerPopUnderAdLink() {
-        console.log("HilltopAds Network: Pop-Under smart traffic link triggered smoothly.");
-        const hilltopSmartLink = "https://htlinks.com"; 
-        window.open(hilltopSmartLink, "_blank");
+    function launchNativeTikTokProfile() {
+        console.log("System Status: Opening profile link in native mobile configuration framework.");
+        const directProfileURL = "https://tiktok.com"; 
+        window.open(directProfileURL, "_blank");
     }
 
     function refreshFinancialValuationsUI() {
@@ -379,7 +361,7 @@
 
         userPointsScore -= pointsToDeduct;
         document.getElementById("balance-points").textContent = userPointsScore;
-        alert(`🎉 Payout processing! Liquidation request for ${(pointsToDeduct * CONVERSION_RATE).toFixed(2)} ₦ has been logged.`);
+        alert(`🎉 Payout processing! Liquidation request for ${(pointsToDeduct * CONVERSION_RATE).toFixed(2)} ₦ has been logged successfully.`);
         inputField.value = "";
         document.getElementById("payout-target").value = "";
         closeDrawerMenu();
@@ -411,4 +393,3 @@
 </script>
 </body>
 </html>
-
