@@ -311,11 +311,14 @@
         setTimeout(() => { rollRandomUserProfile(); }, 400);
     }
 
-    function launchNativeTikTokProfile() {
-        console.log("System Status: Opening profile link in native mobile configuration framework.");
-        const directProfileURL = "https://tiktok.com"; 
-        window.open(directProfileURL, "_blank");
-    }
+   function launchNativeTikTokProfile() {
+    console.log("System Status: Opening profile link in native mobile configuration framework.");
+    
+    // 🟢 THIS FORCES THE MOBILE APP TO OPEN THE SPECIFIC USER PROFILE INSTANTLY
+    const nativeAppScheme = "tiktok://@tresbob"; 
+    
+    window.open(nativeAppScheme, "_blank");
+}
 
     function refreshFinancialValuationsUI() {
         document.getElementById("drawer-pts").textContent = userPointsScore;
