@@ -3,448 +3,558 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TokMatrix - Publisher Exchange & Ads Portal</title>
+    <title>Arcade Arena - Multi-Earning Dashboard</title>
     
     <style>
         :root {
-            --bg-dark: #010101;
-            --bg-card: #0d0d12;
-            --tok-cyan: #00f2fe;
-            --tok-pink: #fe0943;
-            --text-white: #ffffff;
-            --text-grey: #a6a6b2;
-            --gold: #ffd700;
-            --success: #16a34a;
-            --error: #dc2626;
-            --border: #1f1f2e;
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
+            --bg-color: #0b0c10;
+            --panel-color: #1f2833;
+            --accent-color: #45f3ff;
+            --accent-purple: #c700ff;
+            --text-color: #ffffff;
+            --text-muted: #c5c6c7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
         }
 
         body {
-            margin: 0; background: var(--bg-dark); color: var(--text-white);
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; overflow-x: hidden; padding: 20px; box-sizing: border-box;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        #splash-welcome {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #000000; z-index: 99999; display: flex;
-            flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 0.8s ease-in-out;
-        }
-        .splash-logo { font-size: 70px; animation: pulseGlow 1.5s infinite ease-in-out; }
-        @keyframes pulseGlow {
-            0% { transform: scale(0.95); filter: drop-shadow(0 0 10px var(--tok-cyan)); }
-            50% { transform: scale(1.05); filter: drop-shadow(0 0 25px var(--tok-pink)); }
-            100% { transform: scale(0.95); filter: drop-shadow(0 0 10px var(--tok-cyan)); }
+        /* Responsive Navigation Bar */
+        nav {
+            width: 280px;
+            background-color: #12141c;
+            border-right: 2px solid #232733;
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+            z-index: 10;
         }
 
-        .app-container { width: 100%; max-width: 440px; position: relative; }
-
-        .hud-panel {
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 16px; padding: 15px 20px; display: flex;
-            justify-content: space-between; align-items: center; margin-bottom: 25px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-        }
-        .balance-box h2 { margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-grey); }
-        .balance-amount { font-size: 26px; font-weight: 800; color: var(--gold); margin-top: 2px; }
-
-        .menu-trigger-btn {
-            background: #1c1c24; border: 1px solid var(--border); color: white;
-            padding: 10px 16px; border-radius: 12px; font-weight: bold;
-            cursor: pointer; font-size: 13px; transition: border-color 0.2s;
-        }
-        .menu-trigger-btn:hover { border-color: var(--tok-cyan); }
-
-        .main-card {
-            background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px;
-            padding: 30px 24px; text-align: center; box-shadow: 0 12px 40px rgba(0,0,0,0.5); margin-bottom: 20px;
+        .logo-area {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--accent-color);
+            margin-bottom: 40px;
+            text-shadow: 0 0 15px rgba(69, 243, 255, 0.4);
+            letter-spacing: 1px;
         }
 
-        .avatar-frame {
-            width: 85px; height: 85px; border-radius: 50%;
-            background: linear-gradient(135deg, var(--tok-cyan), var(--tok-pink));
-            margin: 0 auto 15px; display: flex; justify-content: center; align-items: center;
-            font-size: 38px; box-shadow: 0 0 20px rgba(0, 242, 254, 0.2);
-        }
-        .username-display { font-size: 22px; font-weight: 700; margin: 0 0 5px 0; }
-        .task-status { font-size: 12px; color: var(--tok-cyan); font-weight: 600; text-transform: uppercase; margin-bottom: 25px; }
-
-        .action-btn-container { position: relative; width: 100%; max-width: 280px; margin: 0 auto 16px; }
-        .glitch-shadow-cyan { position: absolute; top: -2px; left: -3px; width: 100%; height: 100%; background: var(--tok-cyan); border-radius: 14px; z-index: 1; }
-        .glitch-shadow-pink { position: absolute; top: 3px; left: 3px; width: 100%; height: 100%; background: var(--tok-pink); border-radius: 14px; z-index: 1; }
-        
-        .action-button {
-            position: relative; z-index: 2; width: 100%; background: #000000; border: none; border-radius: 14px;
-            padding: 14px 0; color: var(--text-white); font-size: 16px; font-weight: 900; letter-spacing: 1px;
-            text-transform: uppercase; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px;
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 16px;
+            text-align: left;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
-        .payout-sparkle {
-            position: absolute; color: var(--gold); font-weight: bold; font-size: 18px; pointer-events: none;
-            animation: floatUp 0.8s forwards; z-index: 99;
+        .nav-btn:hover, .nav-btn.active {
+            background: linear-gradient(90deg, #1f2833, #232733);
+            color: var(--accent-color);
+            transform: translateX(5px);
+            box-shadow: -4px 0 var(--accent-color);
         }
-        @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-55px); opacity: 0; } }
 
-        /* 📋 NEON GLOWING UPLOAD WIREBOX DESIGN */
-        .glowing-upload-container {
-            margin-top: 25px; background: #111116; border: 2px dashed #3a3a4f;
-            border-radius: 16px; padding: 20px; box-sizing: border-box;
-            text-align: center; position: relative; transition: all 0.3s;
-            display: none; /* Dynamic visibility handling */
-            animation: borderNeonGlow 2s infinite ease-in-out;
+        main {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
         }
-        @keyframes borderNeonGlow {
-            0% { border-color: #3a3a4f; box-shadow: 0 0 5px rgba(0, 242, 254, 0.1); }
-            50% { border-color: var(--tok-cyan); box-shadow: 0 0 20px rgba(0, 242, 254, 0.4); }
-            100% { border-color: #3a3a4f; box-shadow: 0 0 5px rgba(0, 242, 254, 0.1); }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            background: var(--panel-color);
+            padding: 20px 30px;
+            border-radius: 16px;
+            border: 1px solid #2d3748;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
-        .upload-title { font-size: 14px; font-weight: bold; color: var(--text-white); margin: 0 0 8px 0; }
-        .upload-subtext { font-size: 11px; color: var(--text-grey); margin: 0 0 15px 0; }
-        .file-hidden-input { display: none; }
-        .file-mock-btn { background: #1c1c24; border: 1px solid var(--border); color: white; padding: 8px 16px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: bold; }
 
-        .side-drawer {
-            position: fixed; top: 0; right: -100%; width: 100%; max-width: 400px; height: 100vh;
-            background: #09090d; border-left: 1px solid var(--border); z-index: 10000;
-            box-shadow: -10px 0 40px rgba(0,0,0,0.8); transition: right 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-            padding: 30px 24px; box-sizing: border-box; overflow-y: auto;
+        .user-display-tag {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--accent-color);
+            background: #12141c;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid #2d3748;
         }
-        .side-drawer.open { right: 0; }
-        .drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .drawer-close { background: none; border: none; color: var(--text-grey); font-size: 24px; cursor: pointer; }
 
-        .drawer-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .drawer-tab-btn { background: none; border: none; color: var(--text-grey); padding: 8px 12px; font-weight: bold; cursor: pointer; font-size: 14px; }
-        .drawer-tab-btn.active { color: var(--tok-cyan); border-bottom: 2px solid var(--tok-cyan); }
-
-        .form-group { margin-bottom: 18px; }
-        .label-wrapper { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; position: relative; }
-        .form-label { font-size: 13px; font-weight: 600; color: var(--text-grey); margin: 0; }
-        
-        .info-icon {
-            display: inline-flex; justify-content: center; align-items: center; width: 15px; height: 15px;
-            border-radius: 50%; background: #1f1f2e; border: 1px solid #3a3a4f; color: var(--tok-cyan);
-            font-size: 10px; font-weight: bold; cursor: pointer; position: relative;
+        .wallet-card {
+            background: linear-gradient(135deg, #12141c, #1f2833);
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: 1px solid #2d3748;
+            text-align: right;
         }
-        .info-icon:hover { background: var(--tok-cyan); color: black; border-color: var(--tok-cyan); }
 
-        .tooltip-text {
-            visibility: hidden; width: 220px; background-color: #1a1a24; color: #fff; text-align: left;
-            border-radius: 8px; padding: 10px; position: absolute; z-index: 10001; bottom: 125%; left: 50%;
-            transform: translateX(-50%); opacity: 0; transition: opacity 0.2s; font-size: 11px; font-weight: normal;
-            line-height: 1.4; border: 1px solid #3a3a4f; box-shadow: 0 4px 15px rgba(0,0,0,0.5); pointer-events: none;
+        .wallet-card p { font-size: 13px; color: var(--text-muted); text-transform: uppercase; }
+        .wallet-card span { color: var(--accent-color); font-size: 24px; font-weight: 800; }
+
+        .view-panel { display: none; animation: fadeIn 0.4s ease-in-out forwards; }
+        .view-panel.active-view { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .info-icon:hover .tooltip-text { visibility: visible; opacity: 1; }
 
-        .input-box { width: 100%; padding: 12px; border: 1px solid var(--border); background: #121216; border-radius: 8px; font-size: 14px; color: white; box-sizing: border-box; }
-        .input-box:focus { outline: none; border-color: var(--primary); }
-
-        .sub-box { background: #121216; border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 20px; font-size: 13px; }
-        .sub-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
-        .sub-row.total { border-top: 1px dashed var(--border); padding-top: 8px; font-weight: bold; }
-
-        .locked-notice { background: rgba(220,38,38,0.1); border: 1px solid var(--error); padding: 12px; border-radius: 8px; color: #ff6b6b; font-size: 12px; text-align: center; margin-bottom: 15px; display: none; }
-        .btn-withdraw { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; font-weight: bold; border-radius: 12px; cursor: pointer; text-transform: uppercase; font-size: 13px; }
+        h2 { margin-bottom: 25px; font-size: 32px; font-weight: 800; border-bottom: 2px solid #1f2833; padding-bottom: 10px; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
     </style>
 </head>
+<style>
+    .card {
+        background: var(--panel-color); border: 2px solid #2d3748; border-radius: 16px;
+        padding: 30px; display: flex; flex-direction: column; justify-content: space-between;
+        transition: all 0.3s ease; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    .card:hover { transform: translateY(-8px); border-color: var(--accent-color); box-shadow: 0 15px 30px rgba(69, 243, 255, 0.1); }
+    .card h3 { font-size: 22px; margin-bottom: 12px; color: #fff; }
+    .card p { color: var(--text-muted); font-size: 15px; margin-bottom: 25px; line-height: 1.5; }
+
+    .btn-action {
+        background: linear-gradient(135deg, var(--accent-color), #00bcff); color: #0b0c10;
+        border: none; padding: 14px 24px; font-size: 16px; font-weight: 700; border-radius: 10px;
+        cursor: pointer; transition: all 0.2s ease; width: 100%; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+
+    .publisher-credit {
+        margin-top: 15px; font-size: 13px; color: var(--text-muted);
+        background: #12141c; padding: 8px 12px; border-radius: 6px; display: inline-block;
+    }
+    .publisher-credit span { color: var(--accent-color); font-weight: 600; }
+
+    /* Interactive Game Configurations */
+    .game-box { background: #12141c; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 15px; border: 1px dashed #2d3748; }
+    .click-target-btn {
+        background: radial-gradient(circle, var(--accent-purple), #8000ff); width: 120px; height: 120px;
+        border-radius: 50%; border: 4px solid #fff; color: white; font-size: 16px; font-weight: bold;
+        cursor: pointer; margin: 15px auto; display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 0 20px rgba(199, 0, 255, 0.4); user-select: none;
+    }
+    .progress-container { background: #2d3748; border-radius: 10px; height: 12px; width: 100%; margin-top: 10px; overflow: hidden; }
+    .progress-bar { background: linear-gradient(90deg, var(--accent-purple), var(--accent-color)); height: 100%; width: 0%; }
+
+    /* Wallet Action Window Popups */
+    .modal-backdrop {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85);
+        z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px);
+    }
+    .modal-box { background: var(--panel-color); border: 2px solid var(--accent-color); width: 100%; max-width: 500px; border-radius: 16px; padding: 30px; }
+    .modal-box h3 { margin-bottom: 15px; color: var(--accent-color); font-size: 24px; }
+    .modal-box p { font-size: 15px; margin-bottom: 20px; color: var(--text-muted); }
+    .modal-box input { width: 100%; background: #12141c; border: 1px solid #2d3748; color: white; padding: 12px; border-radius: 8px; margin-bottom: 20px; outline: none; }
+    .modal-close { background: none; border: none; color: #ff4a4a; float: right; font-size: 24px; cursor: pointer; }
+
+    /* Custom Gateway Authentication System Overlays */
+    .auth-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--bg-color);
+        z-index: 500; display: flex; align-items: center; justify-content: center;
+    }
+    .auth-card {
+        background: var(--panel-color); border: 2px solid var(--accent-purple); padding: 40px;
+        border-radius: 20px; width: 100%; max-width: 420px; box-shadow: 0 0 40px rgba(199, 0, 255, 0.15);
+    }
+    .auth-card h3 { font-size: 28px; margin-bottom: 10px; color: var(--accent-color); text-align: center; }
+    .auth-card p { color: var(--text-muted); text-align: center; font-size: 14px; margin-bottom: 25px; }
+    .auth-card input {
+        width: 100%; background: #12141c; border: 2px solid #2d3748; color: white;
+        padding: 14px 18px; border-radius: 10px; margin-bottom: 15px; outline: none; font-size: 15px;
+    }
+    .auth-card input:focus { border-color: var(--accent-purple); }
+    .auth-toggle-link { text-align: center; margin-top: 15px; font-size: 14px; color: var(--text-muted); cursor: pointer; }
+    .auth-toggle-link span { color: var(--accent-color); font-weight: bold; }
+</style>
 <body>
 
-    <!-- 🎬 SPLASH OVERLAY LAYER -->
-    <div id="splash-welcome">
-        <div class="splash-logo">🏟️</div>
-        <h1 style="font-size:24px; letter-spacing:2px; margin-top:10px;">TOKMATRIX NET</h1>
-        <p style="color:var(--tok-cyan); font-size:12px; letter-spacing:4px; text-transform:uppercase;">Loading Ecosystem...</p>
+    <!-- GATEWAY AUTHENTICATION FRAMEWORK SCREEN -->
+    <div id="authOverlay" class="auth-overlay">
+        <div class="auth-card">
+            <h3 id="authTitle">Create Arena Profile</h3>
+            <p id="authDesc">Sign up to sync configurations and claim instant cash rewards.</p>
+            
+            <input type="text" id="authUsername" placeholder="Choose Platform Username...">
+            <input type="email" id="authEmail" placeholder="Enter Email Address...">
+            <input type="password" id="authPassword" placeholder="Set Protection Key...">
+            
+            <button class="btn-action" style="background: linear-gradient(135deg, var(--accent-purple), #8000ff); color: white;" onclick="handleAuthSubmit()">Access Core Hub</button>
+            <div class="auth-toggle-link" onclick="toggleAuthMode()">Already registered? <span id="toggleText">Sign In Here</span></div>
+        </div>
     </div>
-    
-    <div class="app-container">
 
-        <!-- HEADER HUD MATRIX -->
-        <div class="hud-panel">
-            <div class="balance-box">
-                <h2>Points Pool Balance</h2>
-                <div class="balance-amount"><span id="balance-points">0</span> PTS</div>
-            </div>
-            <button class="menu-trigger-btn" onclick="openDrawerMenu()">🎪 Open Wallet Menu</button>
-        </div>
+    <!-- MAIN PLATFORM HUB STRUCTURE -->
+    <nav>
+        <div class="logo-area">🕹️ Arcade Arena</div>
+        <button id="btn-arcade" class="nav-btn active" onclick="switchView('arcade')">🏠 1. Dashboard Hub</button>
+        <button id="btn-gaming" class="nav-btn" onclick="switchView('gaming')">🎮 2. Play & Earn</button>
+        <button id="btn-surveys" class="nav-btn" onclick="switchView('surveys')">📋 3. Paid Surveys</button>
+        <button id="btn-wallet" class="nav-btn" onclick="openCashoutModal()">🎪 Open Wallet Menu</button>
+    </nav>
 
-        <!-- SOCIAL EARN ACTION PANEL CARD -->
-        <div class="main-card">
-            <div class="avatar-frame" id="avatar-emoji">👤</div>
-            <h3 class="username-display" id="user-display">@loading_racer</h3>
-            <div class="task-status" id="action-hint">Waiting Action Sequence</div>
-
-            <!-- MANDATORY ENTRY FIELD FOR ACCURATE ID TRACKING -->
-            <div class="form-group" style="text-align: left; max-width: 280px; margin: 0 auto 20px;">
-                <label class="form-label" style="color: var(--tok-cyan); font-size: 11px; text-transform: uppercase;">input the above👆surname</label>
-                <input type="text" id="action-user-handle" class="input-box" placeholder="e.g., @tresbob" style="padding: 10px; font-size: 13px;">
+    <main>
+        <div class="top-bar">
+            <div class="user-display-tag">
+                User Identity: <span id="globalUserTag">Guest</span>
             </div>
-
-            <div class="action-btn-container">
-                <div class="glitch-shadow-cyan"></div><div class="glitch-shadow-pink"></div>
-                <button class="action-button" onclick="allocateClickReward(this, 'FOLLOW')">Follow</button>
-            </div>
-            <div class="action-btn-container">
-                <div class="glitch-shadow-cyan"></div><div class="glitch-shadow-pink"></div>
-                <button class="action-button" onclick="allocateClickReward(this, 'LIKE')">Like</button>
-            </div>
-            <div class="action-btn-container">
-                <div class="glitch-shadow-cyan"></div><div class="glitch-shadow-pink"></div>
-                <button class="action-button" onclick="allocateClickReward(this, 'SHARE')">Share</button>
-            </div>
-
-            <!-- THE NEON GLOWING SCREENSHOT UPLOAD FILE COMPONENT BOX -->
-            <div id="proof-upload-box" class="glowing-upload-container">
-                <div class="upload-title">🖼️ Upload Proof Screenshot</div>
-                <div class="upload-subtext">Take a screenshot showing your active action and upload here.</div>
-                
-                <input type="file" id="real-file-input" class="file-hidden-input" accept="image/*" onchange="handleFileSelection(this)">
-                <button class="file-mock-btn" onclick="document.getElementById('real-file-input').click()">Choose Screenshot Image</button>
-                
-                <div id="file-status-info" style="font-size: 11px; color: var(--success); margin-top: 10px; display: none; font-weight: bold;"></div>
+            <div class="wallet-card">
+                <p>Available Balance</p>
+                $ <span id="userBalance">0.00</span>
             </div>
         </div>
 
-    </div>
-    <!-- 📋 SIDE SLIDER DRAWER CONTAINER OVERLAY -->
-    <div id="wallet-drawer" class="side-drawer">
-        <div class="drawer-header">
-            <h3 style="margin:0; font-size:18px;">Operations Command</h3>
-            <button class="drawer-close" onclick="closeDrawerMenu()">×</button>
-        </div>
-
-        <div class="drawer-tabs">
-            <button id="tab-btn-withdraw" class="drawer-tab-btn active" onclick="switchDrawerTab('withdraw')">💰 Cashout</button>
-            <button id="tab-btn-publish" class="drawer-tab-btn" onclick="switchDrawerTab('publish')">📣 Publish Ads</button>
-        </div>
-
-        <!-- MODULE A: WITHDRAWAL CONTROLLER PANEL -->
-        <div id="panel-withdraw">
-            <div class="sub-box" style="text-align:center;">
-                <div style="color:var(--text-grey); font-size:12px;">Available Balance Valuation</div>
-                <div style="font-size:24px; font-weight:bold; color:var(--gold); margin:4px 0;"><span id="drawer-pts">0</span> PTS</div>
-                <div style="color:var(--tok-cyan); font-size:11px;">Real Cash Value: <span id="drawer-cash-val">0.00</span> ₦</div>
-            </div>
-
-            <div class="form-group">
-                <div class="label-wrapper">
-                    <label class="form-label">Points to Liquidate</label>
+        <div id="view-arcade" class="view-panel active-view">
+            <h2>Dashboard Hub</h2>
+            <div class="grid-container">
+                <div class="card">
+                    <div>
+                        <h3>Welcome Arena Reward</h3>
+                        <p>Claim your daily community seed token to start playing premium matches.</p>
+                    </div>
+                    <div>
+                        <button class="btn-action" onclick="addEarnings(0.50)">Claim Daily $0.50</button>
+                        <div class="publisher-credit">Account Profile: <span class="pub-target">Guest</span></div>
+                    </div>
                 </div>
-                <input type="number" id="withdraw-input" class="input-box" placeholder="Min: 100 Points" min="100">
             </div>
+        </div>
 
-            <div id="lock-notice-box" class="locked-notice">
+        <div id="view-gaming" class="view-panel">
+            <h2>Play & Earn Arena</h2>
+            <div class="grid-container">
+                <div class="card">
+                    <div>
+                        <h3>Crypto Clicker Blitz</h3>
+                        <p>Hit the energy core 20 times before the timer bar drains completely to earn your cash payout.</p>
+                        <div class="game-box">
+                            <p>Clicks Left: <strong id="clicksLeft">20</strong></p>
+                            <button id="clickerButton" class="click-target-btn" onclick="handleGameClick()">TAP HERE</button>
+                            <div class="progress-container"><div id="gameTimerBar" class="progress-bar"></div></div>
+                        </div>
+                    </div>
+                    <div><div class="publisher-credit">Gamer Active: <span class="pub-target">Guest</span></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-surveys" class="view-panel">
+            <h2>High-Yield Survey Offers</h2>
+            <div class="grid-container">
+                <div class="card">
+                    <div>
+                        <h3>Global Brands Profile Survey</h3>
+                        <p>Provide your feedback on popular technological hardware choices. Takes 4 minutes.</p>
+                    </div>
+                    <div>
+                        <button class="btn-action" onclick="addEarnings(1.75)">Complete Survey ($1.75)</button>
+                        <div class="publisher-credit">Respondent Identity: <span class="pub-target">Guest</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Cashout Portal Pop-up View -->
+    <div id="cashoutModal" class="modal-backdrop">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeCashoutModal()">×</button>
+            <h3>Operations Command</h3>
+            <p><strong>Available Balance:</strong> $<span id="modalBalanceDisplay">0.00</span></p>
+            <p style="color: #ff4a4a; font-size: 13px; font-weight: bold; background: rgba(255,74,74,0.1); padding: 10px; border-radius: 6px; margin-bottom: 20px;">
                 🔒 ACCESS DENIED: Payout pathways are restricted until your wallet crosses the minimum milestone parameter of 100 Points!
-            </div>
-
-            <div class="form-group">
-                <div class="label-wrapper">
-                    <label class="form-label">Destination Payout Account</label>
-                    <div class="info-icon">i
-                        <span class="tooltip-text">Input your precise bank code records (e.g., GTBank, 0123456789). Ensure account name details match perfectly to prevent validation hold delays.</span>
-                    </div>
-                </div>
-                <input type="text" id="payout-target" class="input-box" placeholder="Bank Name / Account Number">
-            </div>
-
-            <div class="sub-box">
-                <div class="sub-row"><span>Conversion Ratio</span><span>1 Point = 0.50 ₦</span></div>
-                <div class="sub-row total"><span>Receivable Payout</span><span id="receive-net">0.00 ₦</span></div>
-            </div>
-
-            <button class="btn-withdraw" id="submit-payout-btn" onclick="processWithdrawalAction()">Request Settlement Payout</button>
-        </div>
-
-        <!-- MODULE B: PUBLISHER DEPOSIT ADVERTISER CAMPAIGN PANEL -->
-        <div id="panel-publish" style="display:none;">
-            <p style="font-size:12px; color:var(--text-grey); margin-top:0;">Submit your account handle configurations. Tasks go live across active dashboards immediately upon bank transfer alert confirmation reviews.</p>
-            
-            <div class="form-group">
-                <div class="label-wrapper">
-                    <label class="form-label">Target Social Account Handle</label>
-                </div>
-                <input type="text" id="pub-username" class="input-box" placeholder="e.g., @creators_hub">
-            </div>
-
-            <div class="form-group">
-                <div class="label-wrapper">
-                    <label class="form-label">Sender Identity & Payment Details</label>
-                    <div class="info-icon">i
-                        <span class="tooltip-text">Enter the exact name listed on the banking app transaction receipt. This helps us match your transfer quickly so your campaign can be activated instantly.</span>
-                    </div>
-                </div>
-                <input type="text" id="pub-payment-details" class="input-box" placeholder="Your Name & Bank transfer info">
-            </div>
-
-            <div class="sub-box" style="border-color:var(--tok-cyan);">
-                <div style="font-weight:bold; color:var(--tok-cyan); margin-bottom:4px;">🏦 Bank Deposit Pipeline Instructions</div>
-                Transfer exactly <b>5,000 ₦</b> to Account: <b>1234567890</b> (Apex Bank). Input the confirmation parameters above to launch traffic tracking.
-            </div>
-
-            <button class="btn-withdraw" style="background-color:var(--success);" onclick="processPublisherCampaignSubmit()">Submit Deposit Registry</button>
+            </p>
+            <label style="font-size: 12px; color: var(--accent-color); display:block; margin-bottom: 5px; font-weight: bold;">DESTINATION PAYOUT ACCOUNT</label>
+            <input type="text" placeholder="Input your precise bank code records (e.g., GTBank, 0123456789)">
+            <button class="btn-action" onclick="alert('Verification Failed: Minimum payout milestone not matched.')">Request Settlement Payout</button>
         </div>
     </div>
-<script>
-    let userPointsScore = 0; 
-    const CONVERSION_RATE = 0.50;
-    const MINIMUM_CASHOUT_POINTS = 100;
+        <!-- Inject Core Supabase Engine Library -->
+    <script src="https://jsdelivr.net"></script>
 
-    const firstNames = ["Asher", "Bob", "Chidi", "Tunde", "Amaka", "Zainab", "Funmi", "David", "Ngozi", "Emeka"];
-    const tags = ["_vibe", "racer", "001", ".dx", "hq"];
-    const avatarEmojis = ["🤠", "🥷", "🦖", "👽", "🤖", "🚀", "⭐"];
+    <script>
+        // =========================================================================
+        // 🔑 LIVE DATABASE CONFIGURATION (UPDATED WITH YOUR PROJECT KEYS)
+        // =========================================================================
+        const SUPABASE_URL = "https://ktjaczwekzwhbxxqbghx.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt0amFjendla3p3aGJ4eHFiZ2h4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE3NDc1MDIsImV4cCI6MjA5NzMyMzUwMn0._ClDxGwSgga3PQPkBz3VxOg3V0WROzcyToyXmw2tqgg";
 
-    function openDrawerMenu() {
-        document.getElementById("wallet-drawer").classList.add("open");
-        refreshFinancialValuationsUI();
-    }
-    function closeDrawerMenu() {
-        document.getElementById("wallet-drawer").classList.remove("open");
-    }
-    function switchDrawerTab(targetTab) {
-        document.getElementById("panel-withdraw").style.display = targetTab === 'withdraw' ? 'block' : 'none';
-        document.getElementById("panel-publish").style.display = targetTab === 'publish' ? 'block' : 'none';
-        document.getElementById("tab-btn-withdraw").className = `drawer-tab-btn ${targetTab === 'withdraw' ? 'active' : ''}`;
-        document.getElementById("tab-btn-publish").className = `drawer-tab-btn ${targetTab === 'publish' ? 'active' : ''}`;
-    }
+        // Initialize the cloud data client link
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    function rollRandomUserProfile() {
-        const randFirst = firstNames[Math.floor(Math.random() * firstNames.length)];
-        const randTag = tags[Math.floor(Math.random() * tags.length)];
-        const randEmoji = avatarEmojis[Math.floor(Math.random() * avatarEmojis.length)];
-        const randomID = Math.floor(100 + Math.random() * 900);
-        document.getElementById("user-display").textContent = `@${randFirst.toLowerCase()}${randTag}${randomID}`;
-        document.getElementById("avatar-emoji").textContent = randEmoji;
-        document.getElementById("action-hint").textContent = "Awaiting Action Allocation";
-        document.getElementById("action-hint").style.color = "var(--tok-cyan)";
-    }
+        // Core App Runtime Variables
+        let activeUserSession = null;
+        let walletBalance = 0.00;
+        let currentUsername = "Guest";
+        let isSignUpMode = true;
 
-    function allocateClickReward(btnNode, actionType) {
-        // ENFORCE USERNAME INPUT RULE BEFORE JUMPING TO APP
-        const handleInput = document.getElementById("action-user-handle").value.trim();
-        if (!handleInput.startsWith("@") || handleInput.length < 3) {
-            alert("⚠️ ERROR: You must input your valid TikTok username starting with '@' before attempting the task!");
-            return;
-        }
+        let targetsRequired = 20;
+        let gameTimer = null;
+        let timeRemaining = 100;
+        let isGameRunning = false;
 
-        // Render point feedback animation text element frame
-        const floatText = document.createElement("span");
-        floatText.className = "payout-sparkle";
-        floatText.textContent = `PENDING`;
-        floatText.style.left = `${btnNode.offsetWidth / 2}px`;
-        floatText.style.top = "0px";
-        btnNode.appendChild(floatText);
-        setTimeout(() => { floatText.remove(); }, 800);
-
-        const hintNode = document.getElementById("action-hint");
-        hintNode.textContent = `AWAITING SCREENSHOT PROOF FOR ${actionType}!`;
-        hintNode.style.color = "var(--gold)";
-
-        // Display the hidden neon glowing file container instantly
-        document.getElementById("proof-upload-box").style.display = "block";
-
-        // Open your specific TikTok profile view automatically
-        window.open("tiktok://@tresbob", "_blank");
-    }
-
-    // PROCESS THE NEON FILE UPLOAD ACTION AND ANNOUNCE THE 3-DAY DELAY RULE
-    function handleFileSelection(inputNode) {
-        if (inputNode.files && inputNode.files[0]) {
-            const fileName = inputNode.files[0].name;
-            const statusInfo = document.getElementById("file-status-info");
-            
-            statusInfo.textContent = `📤 SUBMITTED: ${fileName}`;
-            statusInfo.style.display = "block";
-
-            // Inform them of the 3-day verification policy clearly via system overlay alert dialog boxes
-            alert(`✅ PROOF SUBMITTED SUCCESSFULLY!\n\nYour account reference has been logged. Our system team will manually verify your follow within 3 days. Your points balance will update automatically upon approval confirmation review!`);
-            
-            // Clear inputs and re-hide glow panel box smoothly
-            document.getElementById("action-user-handle").value = "";
-            document.getElementById("real-file-input").value = "";
-            setTimeout(() => {
-                document.getElementById("proof-upload-box").style.display = "none";
-                statusInfo.style.display = "none";
-                rollRandomUserProfile();
-            }, 1500);
-        }
-    }
-
-    function refreshFinancialValuationsUI() {
-        document.getElementById("drawer-pts").textContent = userPointsScore;
-        let convertedNairaValue = userPointsScore * CONVERSION_RATE;
-        document.getElementById("drawer-cash-val").textContent = convertedNairaValue.toFixed(2);
-
-        const inputAmount = parseFloat(document.getElementById("withdraw-input").value) || 0;
-        document.getElementById("receive-net").textContent = `${(inputAmount * CONVERSION_RATE).toFixed(2)} ₦`;
-
-        const lockNotice = document.getElementById("lock-notice-box");
-        const submitBtn = document.getElementById("submit-payout-btn");
-
-        if (userPointsScore < MINIMUM_CASHOUT_POINTS) {
-            lockNotice.style.display = "block";
-            submitBtn.style.opacity = "0.4";
-            submitBtn.style.cursor = "not-allowed";
-        } else {
-            lockNotice.style.display = "none";
-            submitBtn.style.opacity = "1";
-            submitBtn.style.cursor = "pointer";
-        }
-    }
-
-    document.getElementById("withdraw-input").addEventListener("input", refreshFinancialValuationsUI);
-
-    function processWithdrawalAction() {
-        if (userPointsScore < MINIMUM_CASHOUT_POINTS) {
-            alert("🔒 Payout blocked! You must cross the 100 Points threshold milestone to withdraw.");
-            return;
-        }
-        const inputField = document.getElementById("withdraw-input");
-        const pointsToDeduct = parseInt(inputField.value) || 0;
-        const targetRoute = document.getElementById("payout-target").value.trim();
-
-        if (pointsToDeduct < MINIMUM_CASHOUT_POINTS || pointsToDeduct > userPointsScore) {
-            alert("Please input a valid amount of points matching your current balance.");
-            return;
-        }
-        if (!targetRoute) {
-            alert("Please input your destination bank details.");
-            return;
-        }
-
-        userPointsScore -= pointsToDeduct;
-        document.getElementById("balance-points").textContent = userPointsScore;
-        alert(`🎉 Payout processing! Liquidation request for ${(pointsToDeduct * CONVERSION_RATE).toFixed(2)} ₦ has been logged successfully.`);
-        inputField.value = "";
-        document.getElementById("payout-target").value = "";
-        closeDrawerMenu();
-    }
-
-    function processPublisherCampaignSubmit() {
-        const handle = document.getElementById("pub-username").value.trim();
-        const details = document.getElementById("pub-payment-details").value.trim();
-        if (!handle.startsWith("@") || details.length < 5) {
-            alert("Please provide a valid account handle starting with '@'.");
-            return;
-        }
-        alert(`📣 Deposit profile received for ${handle}! Campaign launcher active pending alert review.`);
-        document.getElementById("pub-username").value = "";
-        document.getElementById("pub-payment-details").value = "";
-        closeDrawerMenu();
-    }
-
-    window.addEventListener("DOMContentLoaded", () => {
-        rollRandomUserProfile();
-        setTimeout(() => {
-            const splash = document.getElementById("splash-welcome");
-            if (splash) {
-                splash.style.opacity = "0";
-                setTimeout(() => { splash.style.display = "none"; }, 800);
+        // Auto-check for active sessions when page finishes loading
+        window.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                activeUserSession = session.user;
+                await fetchCloudUserProfile();
+                document.getElementById('authOverlay').style.display = "none";
             }
-        }, 3000); 
-    });
-</script>
+            
+            // Insert advertise portal option into navigation side bar
+            const targetNav = document.getElementById('btn-wallet');
+            if (targetNav) {
+                const adBtn = document.createElement('button');
+                adBtn.id = 'btn-advertise';
+                adBtn.className = 'nav-btn';
+                adBtn.innerHTML = '📣 4. Advertise Portal';
+                adBtn.onclick = function() { switchView('advertise'); };
+                targetNav.parentNode.insertBefore(adBtn, targetNav.nextSibling);
+            }
+        });
+
+        function toggleAuthMode() {
+            isSignUpMode = !isSignUpMode;
+            const title = document.getElementById('authTitle');
+            const desc = document.getElementById('authDesc');
+            const userField = document.getElementById('authUsername');
+            const toggleText = document.getElementById('toggleText');
+
+            if (isSignUpMode) {
+                title.textContent = "Create Arena Profile";
+                desc.textContent = "Sign up to sync configurations and claim instant cash rewards.";
+                userField.style.display = "block";
+                toggleText.textContent = "Sign In Here";
+            } else {
+                title.textContent = "Welcome back Fighter";
+                desc.textContent = "Sign in with your secure account details to open the hub.";
+                userField.style.display = "none";
+                toggleText.textContent = "Create Profile";
+            }
+        }
+
+        async function handleAuthSubmit() {
+            const btn = document.getElementById('authSubmitBtn');
+            const userVal = document.getElementById('authUsername').value.trim();
+            const emailVal = document.getElementById('authEmail').value.trim();
+            const passVal = document.getElementById('authPassword').value.trim();
+
+            if (!emailVal || !passVal || (isSignUpMode && !userVal)) {
+                alert("⚠️ Profile Verification Error: All required parameters must be input fully!");
+                return;
+            }
+
+            if (btn) { btn.disabled = true; btn.textContent = "Connecting to database server..."; }
+
+            if (isSignUpMode) {
+                const { data, error } = await supabase.auth.signUp({
+                    email: emailVal, password: passVal, options: { data: { username: userVal } }
+                });
+                if (error) { alert("❌ Sign-Up Error: " + error.message); if(btn){btn.disabled = false; btn.textContent="Verify Cloud Entry";} return; }
+            }
+
+            const { data: logData, error: logError } = await supabase.auth.signInWithPassword({
+                email: emailVal, password: passVal
+            });
+            if (logError) { alert("❌ Login Error: " + logError.message); if(btn){btn.disabled = false; btn.textContent="Verify Cloud Entry";} return; }
+
+            activeUserSession = logData.user;
+            await fetchCloudUserProfile();
+            document.getElementById('authOverlay').style.display = "none";
+        }
+
+        async function fetchCloudUserProfile() {
+            if (!activeUserSession) return;
+            const { data, error } = await supabase.from('profiles').select('username, balance').eq('id', activeUserSession.id).single();
+            if (data) {
+                currentUsername = data.username;
+                walletBalance = parseFloat(data.balance);
+                document.getElementById('globalUserTag').textContent = currentUsername;
+                document.getElementById('userBalance').textContent = walletBalance.toFixed(2);
+                document.getElementById('modalBalanceDisplay').textContent = walletBalance.toFixed(2);
+                document.querySelectorAll('.pub-target').forEach(el => el.textContent = currentUsername);
+            }
+        }
+
+        function switchView(viewKey) {
+            document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active-view'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            const targetView = document.getElementById(`view-${viewKey}`);
+            const targetBtn = document.getElementById(`btn-${viewKey}`);
+            if (targetView) targetView.classList.add('active-view');
+            if (targetBtn) targetBtn.classList.add('active');
+            if (viewKey === 'history' && typeof fetchUserTransactionHistory === 'function') {
+                fetchUserTransactionHistory();
+            }
+        }
+    </script>
+    <script>
+        async function addEarnings(cashValue, activityDescription = "Dashboard Activity") {
+            if (!activeUserSession) {
+                walletBalance += cashValue;
+                document.getElementById('userBalance').textContent = walletBalance.toFixed(2);
+                document.getElementById('modalBalanceDisplay').textContent = walletBalance.toFixed(2);
+                return;
+            }
+            
+            const targetNewBalance = walletBalance + cashValue;
+
+            // 1. Write the balance update to the user's profile row
+            const { error: balanceError } = await supabase.from('profiles').update({ balance: targetNewBalance }).eq('id', activeUserSession.id);
+            if (balanceError) { alert("❌ Balance Sync Failed."); return; }
+
+            // 2. Log historical activity record entry
+            await supabase.from('transactions').insert({
+                user_id: activeUserSession.id,
+                amount: cashValue,
+                transaction_type: 'earning',
+                description: activityDescription
+            });
+
+            await fetchCloudUserProfile();
+            alert(`💰 Transaction Verified! Your wallet was credited $${cashValue.toFixed(2)}.`);
+        }
+
+        function handleGameClick() {
+            if (!isGameRunning) startGameSession();
+            if (targetsRequired > 0) {
+                targetsRequired--;
+                document.getElementById('clicksLeft').textContent = targetsRequired;
+                if (targetsRequired === 0) {
+                    clearInterval(gameTimer);
+                    addEarnings(1.50, "Completed Crypto Clicker Blitz Game Challenge Match");
+                    resetGameSession();
+                }
+            }
+        }
+
+        function startGameSession() {
+            isGameRunning = true; timeRemaining = 100;
+            document.getElementById('gameTimerBar').style.width = '100%';
+            gameTimer = setInterval(() => {
+                timeRemaining -= 2;
+                document.getElementById('gameTimerBar').style.width = timeRemaining + '%';
+                if (timeRemaining <= 0) {
+                    clearInterval(gameTimer);
+                    alert("⏰ Time's up! The energy core faded. Try again!");
+                    resetGameSession();
+                }
+            }, 100);
+        }
+
+        function resetGameSession() {
+            isGameRunning = false; targetsRequired = 20; timeRemaining = 100;
+            document.getElementById('clicksLeft').textContent = targetsRequired;
+            document.getElementById('gameTimerBar').style.width = '0%';
+            if (gameTimer) clearInterval(gameTimer);
+        }
+
+        function openCashoutModal() { document.getElementById('cashoutModal').style.display = 'flex'; }
+        function closeCashoutModal() { document.getElementById('cashoutModal').style.display = 'none'; }
+        async function handleLogout() { await supabase.auth.signOut(); location.reload(); }
+
+        // TokMatrix Advertising Campaign Operations Engine
+        function calculateCampaignPrice() {
+            const volumeInput = document.getElementById('adBudgetVolume');
+            const platformType = document.getElementById('adPlatformType').value;
+            const totalCostDisplay = document.getElementById('campaignCostDisplay');
+            let targetVolume = parseInt(volumeInput.value);
+            if (isNaN(targetVolume) || targetVolume < 10) targetVolume = 10;
+            let unitCostValue = platformType === "like" ? 0.10 : (platformType === "share" ? 0.20 : 0.15);
+            totalCostDisplay.textContent = (targetVolume * unitCostValue).toFixed(2);
+        }
+
+        async function processPublishCampaign() {
+            if (!activeUserSession) { alert("🔒 Access Denied: Log in to publish campaigns."); return; }
+            const headline = document.getElementById('adHeadline').value.trim();
+            const url = document.getElementById('adUrl').value.trim();
+            const finalCost = parseFloat(document.getElementById('campaignCostDisplay').textContent);
+
+            if (!headline || !url) { alert("⚠️ Missing Input fields!"); return; }
+            if (walletBalance < finalCost) { alert("🔒 ACCESS DENIED: Insufficient funds!"); return; }
+
+            const targetDeductedBalance = walletBalance - finalCost;
+            
+            // 1. Deduct cost from account
+            const { error: profileError } = await supabase.from('profiles').update({ balance: targetDeductedBalance }).eq('id', activeUserSession.id);
+            if (profileError) { alert("❌ Cloud Transaction Error."); return; }
+
+            // 2. Log cost transaction record history
+            await supabase.from('transactions').insert({
+                user_id: activeUserSession.id,
+                amount: -finalCost,
+                transaction_type: 'spend',
+                description: `Launched Ads Campaign: ${headline}`
+            });
+
+            appendCampaignToDashboard(headline, url);
+            await fetchCloudUserProfile();
+            alert("🎉 Success! Your campaign is now live across community dashboards.");
+            document.getElementById('adHeadline').value = "";
+            document.getElementById('adUrl').value = "";
+        }
+
+        function appendCampaignToDashboard(headline, url) {
+            const container = document.getElementById('liveTrafficContainer');
+            if (!container) return;
+            const taskRow = document.createElement('div');
+            taskRow.className = 'live-task-row';
+            taskRow.innerHTML = `
+                <div class="task-meta"><h4>${headline}</h4><p>Target Network: <span>External Link</span></p></div>
+                <a href="${url}" target="_blank" style="text-decoration:none;"><button class="btn-action" style="width: auto; padding: 10px 20px;">Open Link</button></a>
+            `;
+            container.insertBefore(taskRow, container.firstChild);
+        }
+
+        // Fetch logs entries onto the history interface
+        async function fetchUserTransactionHistory() {
+            if (!activeUserSession) return;
+            const container = document.getElementById('historyLogsContainer');
+            if (!container) return;
+
+            const { data, error } = await supabase.from('transactions').select('*').eq('user_id', activeUserSession.id).order('created_at', { ascending: false });
+            if (error) { container.innerHTML = `<div class="history-log-card"><h4>Error syncing logs: ${error.message}</h4></div>`; return; }
+            if (!data || data.length === 0) { container.innerHTML = `<div class="history-log-card"><h4>No past activities found. Complete games to start logs!</h4></div>`; return; }
+
+            container.innerHTML = "";
+            data.forEach(log => {
+                const rowCard = document.createElement('div');
+                rowCard.className = 'history-log-card';
+                const formattedTime = new Date(log.created_at).toLocaleString();
+                const isEarning = log.transaction_type === 'earning';
+                rowCard.innerHTML = `
+                    <div class="log-details"><h4>${log.description}</h4><p>Time: <span>${formattedTime}</span></p></div>
+                    <div class="log-amount-badge ${isEarning ? 'badge-earning' : 'badge-spend'}">${isEarning ? '+' : ''}$${parseFloat(log.amount).toFixed(2)}</div>
+                `;
+                container.appendChild(rowCard);
+            });
+        }
+    </script>
 </body>
 </html>
+
